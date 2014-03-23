@@ -13,6 +13,6 @@
     	android:layout_width="fill_parent"
     	android:layout_height="30dp"
     	android:layout_marginLeft="5dp"
-    	android:onClick="editSubTask"
+    	android:onClick="EditSubTask"
     	android:clickable="true"/>
 </LinearLayout>
