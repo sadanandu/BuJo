@@ -48,11 +48,8 @@ public class EditTask extends Activity{
     		taskDescription.setText(currentTask.getDescription());
     		Calendar cal = Calendar.getInstance();
     		cal.setTimeInMillis(currentTask.getDate());
-    		out.println(cal.get(cal.DATE));
-    		out.println(cal.get(Calendar.YEAR));
-    		out.println(cal.get(Calendar.MONTH));
     		taskDatePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(cal.DATE));
-    		taskTimePicker.setCurrentHour(cal.get(Calendar.HOUR));
+    		taskTimePicker.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
     		taskTimePicker.setCurrentMinute(cal.get(Calendar.MINUTE));
     	}
     	setupActionBar();
@@ -134,6 +131,4 @@ public class EditTask extends Activity{
 		currentTask.setDate(milliseconds);
 		taskHandler.saveTask(currentTask);
 	}
-
-	
 }

@@ -140,7 +140,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
 		String noteDescription, noteName;
 		long noteDate;		
 		c.moveToFirst();
-		noteName = c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK));
+		noteName = c.getString(c.getColumnIndex(BujoDbHandler.KEY_NOTE));
 		noteDescription = c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION));
 		noteDate = c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE));
 		Note note = new Note();

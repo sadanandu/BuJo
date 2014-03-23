@@ -1,6 +1,8 @@
 package com.example.bujo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,7 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -28,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bujo.model.Bullet;
+import com.example.bujo.model.Note;
 import com.example.bujo.model.SubTask;
 import com.example.bujo.model.Task;
 import com.example.bujo.util.ApplicationConstants;
@@ -68,6 +71,13 @@ public class Today extends Activity implements View.OnTouchListener{
 		return taskObject;		
 	}
 
+	public Note getNoteObjectFor(int noteId, Context context){
+		BujoDbHandler dbHandler = new BujoDbHandler(context);
+		Note noteObject = dbHandler.getNote(noteId);
+		return noteObject;		
+	}
+
+	
 	public SubTask getSubTaskObjectFor(int subTaskId, Context context){
 		BujoDbHandler taskHandler = new BujoDbHandler(context);
 		SubTask subTaskObject = taskHandler.getSubTask(subTaskId);
@@ -88,7 +98,8 @@ public class Today extends Activity implements View.OnTouchListener{
 			new TaskCreator().execute();
 			return true;
 		case R.id.action_add_note:
-			Toast.makeText(getApplicationContext(), "adding note", Toast.LENGTH_SHORT).show();
+			new NoteCreator().execute();
+			//Toast.makeText(getApplicationContext(), "adding note", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_add_event:
 			Toast.makeText(getApplicationContext(), "adding event", Toast.LENGTH_SHORT).show();
@@ -126,6 +137,15 @@ public class Today extends Activity implements View.OnTouchListener{
 //	            return super.onContextItemSelected(item);
 //	    }
 //	}
+	public ArrayList<Bullet> GetSorted(ArrayList<Bullet> bullets){
+		Collections.sort(bullets, new Comparator<Bullet>() {
+			@Override
+			public int compare(Bullet bullet1, Bullet bullet2){
+				return (((Long)bullet1.getDate()).compareTo((Long)bullet2.getDate()));
+			}
+		});
+		return bullets;
+	}
 	
 	private class PopulateJournalEntries extends AsyncTask<Context, Void, ArrayList<Bullet>>{
 
@@ -136,13 +156,13 @@ public class Today extends Activity implements View.OnTouchListener{
 			ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 			bullets = dbHandler.getTodayTasks();
 			bullets.addAll(dbHandler.getTodayNotes());
-			return bullets;
+			return GetSorted(bullets);
 		}
 		
 		protected void onPostExecute(ArrayList<Bullet> bullets){
 			ListView list = (ListView) findViewById(R.id.listView);
 			//list.setOnTouchListener(gestureListener);
-			ListViewAdapter adapter = new ListViewAdapter(Today.this, R.layout.layout_task, bullets);
+			ListViewAdapter adapter = new ListViewAdapter(bullets, Today.this);
 			list.setAdapter(adapter);
 		}
 	}
@@ -153,6 +173,14 @@ public class Today extends Activity implements View.OnTouchListener{
 		Task taskObject = getTaskObjectFor(taskId, getApplicationContext());
 		new TaskEditor().execute(taskObject);
 	}
+
+	public void EditThisNote(View v){
+		TextView textView = (TextView) v.findViewById(R.id.textView);
+		int noteId =  Integer.valueOf(textView.getTag().toString());
+		Note noteObject = getNoteObjectFor(noteId, getApplicationContext());
+		new NoteEditor().execute(noteObject);
+	}
+
 	
 	public void editSubTask(View v){
 		TextView textViewSubTask = (TextView) v.findViewById(R.id.textViewForSubTask);
@@ -173,6 +201,20 @@ public class Today extends Activity implements View.OnTouchListener{
 		}
 	}
 	
+	private class NoteDeleter extends AsyncTask<Integer, Void, Void>{
+		@Override
+		protected Void doInBackground(Integer...noteIds) {
+			BujoDbHandler dbHandler = new BujoDbHandler(getApplicationContext());
+			dbHandler.deleteNote(noteIds[0]);
+			return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+	}
+
+	
+	
 	private class TaskEditor extends AsyncTask<Task, Void, Void>{
 		@Override
 		protected Void doInBackground(Task...tasks) {
@@ -185,6 +227,20 @@ public class Today extends Activity implements View.OnTouchListener{
 		protected void onPostExecute(){
 		}
 	}
+
+	private class NoteEditor extends AsyncTask<Note, Void, Void>{
+		@Override
+		protected Void doInBackground(Note...notes) {
+			Intent intent = new Intent(Today.this, EditNote.class);
+			intent.putExtra(ApplicationConstants.NOTE_OBJECT, notes[0]);
+	    	startActivity(intent);
+	    	return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+	}
+
 	
 	private class SubTaskEditor extends AsyncTask<SubTask, Void, Void>{
 		@Override
@@ -211,6 +267,20 @@ public class Today extends Activity implements View.OnTouchListener{
 		}
 		
 	}
+
+	private class NoteCreator extends AsyncTask<Void, Void, Void>{
+		@Override
+		protected Void doInBackground(Void...voids) {
+			Intent intent = new Intent(Today.this, AddNote.class);
+	    	startActivity(intent);
+	    	return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+		
+	}
+	
 	
 	private class SubTaskCreator extends AsyncTask<Task, Void, Void>{
 		@Override
@@ -237,13 +307,6 @@ public class Today extends Activity implements View.OnTouchListener{
 		}
 	}
 
-	static class ViewHolder{
-		View rowView, subLine;
-		TextView textForTask, textForSubTask;
-		CheckBox checkBoxForTask, checkBoxForSubTask;
-		LinearLayout layoutForSubTask;
-	}
-	
 	public class MyGestureDetector extends SimpleOnGestureListener{
 
 		@Override
@@ -270,119 +333,193 @@ public class Today extends Activity implements View.OnTouchListener{
 			return true;
 		}
 	}
-	
-	
-	public class ListViewAdapter extends ArrayAdapter<Bullet>{
+
+	static class ViewHolder{
+		View rowView, subLine;
+		TextView textForTask, textForSubTask;
+		CheckBox checkBoxForTask, checkBoxForSubTask;
+		LinearLayout layoutForSubTask;
+	}
+
+	public class ListViewAdapter extends BaseAdapter{
 		private final Context context;
-		private final int layoutId ;
 		private final ArrayList<Bullet> values;
+		private final LayoutInflater inflater;
+		private static final int TASKROW = 0;
+		private static final int NOTEROW = 1;
+		private static final int EVENTROW = 2;
 		
-		public ListViewAdapter(Context context, int layoutId, ArrayList<Bullet> values){
-			super(context, layoutId, values);
-			this.context = context;
-			this.layoutId = layoutId;
+		public ListViewAdapter(ArrayList<Bullet> values, Context context){
+			super();
 			this.values = values;
+			this.context = context;
+			LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			this.inflater = inflater;
 		}
 		
-		 @Override
-	     public int getCount(){
-	           return values!=null ? values.size() : 0;
-	     }
+		@Override
+		public int getItemViewType(int position) {
+			// TODO Auto-generated method stub
+			if (values.get(position).getClass().getName().equals("com.example.bujo.model.Task")){
+				return this.TASKROW;
+			}
+			if (values.get(position).getClass().getName().equals("com.example.bujo.model.Note")){
+				return this.NOTEROW;
+			}
+			return -1;
+		}
+
+		@Override
+		public int getViewTypeCount() {
+			// TODO Auto-generated method stub
+			return 3;
+		}
+
+		@Override
+	    public int getCount(){
+	       return this.values!=null ? this.values.size() : 0;
+	    }
 		
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int arg0) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent){
 
 			final ViewHolder holder;
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			if (convertView == null){
-				final View rowView = inflater.inflate(this.layoutId, parent, false);
-				rowView.setClickable(true);
-				convertView = rowView;
-				holder = new ViewHolder();
-				holder.rowView = rowView;
-				//holder.rowView.setOnTouchListener(gestureListener);
-				holder.textForTask = (TextView) rowView.findViewById(R.id.textView);
-				holder.checkBoxForTask = (CheckBox) rowView.findViewById(R.id.checkBox);
-				holder.layoutForSubTask = (LinearLayout) rowView.findViewById(R.id.linearLayoutForSubTask);
-				holder.layoutForSubTask.removeAllViews();
-				convertView.setTag(holder);
-			}
-			else{
-				holder = (ViewHolder)convertView.getTag();
-			}
-			
-			if (values != null){
-				holder.checkBoxForTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton button, boolean isChecked) {
-						// TODO Auto-generated method stub
-						if (isChecked == true){
-							holder.textForTask.setPaintFlags(holder.textForTask.getPaintFlags()|Paint.STRIKE_THRU_TEXT_FLAG);
-							CompleteAllSubTasksForTask(holder.rowView);
-						}
-						else{
-							holder.textForTask.setPaintFlags(holder.textForTask.getPaintFlags()& ~ Paint.STRIKE_THRU_TEXT_FLAG);
-						}
-					}
-				} );
-				if (values.get(position).getClass().getName().equals("com.example.bujo.model.Task")){
-					Task tempTask = (Task)(values.get(position));
-					holder.textForTask.setText(tempTask.getName());
-					holder.textForTask.setTag(tempTask.get_id());
-					if (tempTask.getIsDone() == "Yes"){
-						holder.checkBoxForTask.setChecked(true);
-					}
+			final int rowType = getItemViewType(position);
+			if(rowType == TASKROW){
+				
+				if (convertView == null){
+					final View rowView = this.inflater.inflate(R.layout.layout_task, parent, false);
+					rowView.setClickable(true);
+					convertView = rowView;
+					holder = new ViewHolder();
+					holder.rowView = rowView;
+					//holder.rowView.setOnTouchListener(gestureListener);
+					holder.textForTask = (TextView) rowView.findViewById(R.id.textView);
+					holder.checkBoxForTask = (CheckBox) rowView.findViewById(R.id.checkBox);
+					holder.layoutForSubTask = (LinearLayout) rowView.findViewById(R.id.linearLayoutForSubTask);
+					holder.layoutForSubTask.removeAllViews();
+					convertView.setTag(holder);
+				}
+				else{
+					holder = (ViewHolder)convertView.getTag();
 				}
 				
-				holder.textForTask.setOnLongClickListener(new OnLongClickListener() {
-					@Override
-					public boolean onLongClick(View v) {
-						// TODO Auto-generated method stub
-						showOptionsMenuForTask((TextView)v);
-						return true;
-					}
-				});
-				
-				ArrayList<SubTask> subtasks = new ArrayList<SubTask>();
-				BujoDbHandler taskHandler = new BujoDbHandler(getContext());
-				subtasks = taskHandler.getSubTasksForTask(values.get(position).get_id());
-				taskHandler.close();
-				for(int i =0; i < subtasks.size(); i = i +1){
-					View subLine = inflater.inflate(R.layout.layout_sub_task, null);
-					final TextView textViewForSubTask = (TextView) subLine.findViewById(R.id.textViewForSubTask);
-					final CheckBox checkBoxForSubTask = (CheckBox) subLine.findViewById(R.id.checkBoxForSubTask);
-					textViewForSubTask.setText(subtasks.get(i).getSubTaskName());
-					textViewForSubTask.setTag(subtasks.get(i).get_id());
-					if (subtasks.get(i).getIsDone() == "Yes"){
-						checkBoxForSubTask.setChecked(true);
-					}
-					
-					checkBoxForSubTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				if (values != null){
+					holder.checkBoxForTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 						@Override
 						public void onCheckedChanged(CompoundButton button, boolean isChecked) {
 							// TODO Auto-generated method stub
 							if (isChecked == true){
-								textViewForSubTask.setPaintFlags(textViewForSubTask.getPaintFlags()|Paint.STRIKE_THRU_TEXT_FLAG);
+								holder.textForTask.setPaintFlags(holder.textForTask.getPaintFlags()|Paint.STRIKE_THRU_TEXT_FLAG);
+								CompleteAllSubTasksForTask(holder.rowView);
 							}
 							else{
-								textViewForSubTask.setPaintFlags(textViewForSubTask.getPaintFlags()& ~ Paint.STRIKE_THRU_TEXT_FLAG);
-								ChangeStatusOfParentTaskIfApplicable(holder.rowView);
+								holder.textForTask.setPaintFlags(holder.textForTask.getPaintFlags()& ~ Paint.STRIKE_THRU_TEXT_FLAG);
 							}
 						}
 					} );
-
-					textViewForSubTask.setOnLongClickListener(new OnLongClickListener() {
+					if (values.get(position).getClass().getName().equals("com.example.bujo.model.Task")){
+						Task tempTask = (Task)(values.get(position));
+						holder.textForTask.setText(tempTask.getName());
+						holder.textForTask.setTag(tempTask.get_id());
+						if (tempTask.getIsDone() == "Yes"){
+							holder.checkBoxForTask.setChecked(true);
+						}
+					}
+					
+					holder.textForTask.setOnLongClickListener(new OnLongClickListener() {
 						@Override
 						public boolean onLongClick(View v) {
 							// TODO Auto-generated method stub
-							showOptionsMenuForSubTask((TextView)v);
+							showOptionsMenuForTask((TextView)v);
 							return true;
 						}
 					});
-					holder.layoutForSubTask.addView(subLine);
+					
+					ArrayList<SubTask> subtasks = new ArrayList<SubTask>();
+					BujoDbHandler taskHandler = new BujoDbHandler(this.context);
+					subtasks = taskHandler.getSubTasksForTask(values.get(position).get_id());
+					taskHandler.close();
+					for(int i =0; i < subtasks.size(); i = i +1){
+						View subLine = inflater.inflate(R.layout.layout_sub_task, null);
+						final TextView textViewForSubTask = (TextView) subLine.findViewById(R.id.textViewForSubTask);
+						final CheckBox checkBoxForSubTask = (CheckBox) subLine.findViewById(R.id.checkBoxForSubTask);
+						textViewForSubTask.setText(subtasks.get(i).getSubTaskName());
+						textViewForSubTask.setTag(subtasks.get(i).get_id());
+						if (subtasks.get(i).getIsDone() == "Yes"){
+							checkBoxForSubTask.setChecked(true);
+						}
+						
+						checkBoxForSubTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+							@Override
+							public void onCheckedChanged(CompoundButton button, boolean isChecked) {
+								// TODO Auto-generated method stub
+								if (isChecked == true){
+									textViewForSubTask.setPaintFlags(textViewForSubTask.getPaintFlags()|Paint.STRIKE_THRU_TEXT_FLAG);
+								}
+								else{
+									textViewForSubTask.setPaintFlags(textViewForSubTask.getPaintFlags()& ~ Paint.STRIKE_THRU_TEXT_FLAG);
+									ChangeStatusOfParentTaskIfApplicable(holder.rowView);
+								}
+							}
+						} );
+
+						textViewForSubTask.setOnLongClickListener(new OnLongClickListener() {
+							@Override
+							public boolean onLongClick(View v) {
+								// TODO Auto-generated method stub
+								showOptionsMenuForSubTask((TextView)v);
+								return true;
+							}
+						});
+						holder.layoutForSubTask.addView(subLine);
+					}
 				}
+				return holder.rowView;
 			}
-			return holder.rowView;
+
+			if(rowType == NOTEROW){
+				if (convertView == null){
+					final View rowView = this.inflater.inflate(R.layout.layout_note, parent, false);
+					rowView.setClickable(true);
+					convertView = rowView;
+					holder = new ViewHolder();
+					holder.rowView = rowView;
+					holder.textForTask = (TextView) rowView.findViewById(R.id.textView);
+					convertView.setTag(holder);
+				}
+				else{
+					holder = (ViewHolder)convertView.getTag();
+				}
+				if (values != null){
+					Note tempNote = (Note)(values.get(position));
+					holder.textForTask.setText(tempNote.getName());
+					holder.textForTask.setTag(tempNote.get_id());
+					holder.textForTask.setOnLongClickListener(new OnLongClickListener() {
+						@Override
+						public boolean onLongClick(View v) {
+							// TODO Auto-generated method stub
+							showOptionsMenuForNote((TextView)v);
+							return true;
+						}
+					});
+			
+				}
+				return holder.rowView;
+			}
+			return convertView;
 		}
 
 
@@ -403,7 +540,7 @@ public class Today extends Activity implements View.OnTouchListener{
 		
 		@SuppressWarnings("deprecation")
 		public void showOptionsMenuForTask(final TextView v){
-			AlertDialog alert = new AlertDialog.Builder(getContext()).create();
+			AlertDialog alert = new AlertDialog.Builder(this.context).create();
 			alert.setTitle("Task Actions");
 			alert.setButton("Delete Task", new DialogInterface.OnClickListener() {
 				@Override
@@ -429,7 +566,7 @@ public class Today extends Activity implements View.OnTouchListener{
 		
 		@SuppressWarnings("deprecation")
 		public void showOptionsMenuForSubTask(final TextView v){
-			AlertDialog alert = new AlertDialog.Builder(getContext()).create();
+			AlertDialog alert = new AlertDialog.Builder(this.context).create();
 			alert.setTitle("Sub-Task Actions");
 			alert.setButton("Delete Sub-Task", new DialogInterface.OnClickListener() {
 				@Override
@@ -441,6 +578,23 @@ public class Today extends Activity implements View.OnTouchListener{
 			});
 			alert.show();
 		}
+		
+		@SuppressWarnings("deprecation")
+		public void showOptionsMenuForNote(final TextView v){
+			AlertDialog alert = new AlertDialog.Builder(this.context).create();
+			alert.setTitle("Note Actions");
+			alert.setButton("Delete Note", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					// TODO Auto-generated method stub
+					new NoteDeleter().execute(Integer.valueOf(v.getTag().toString()));
+					recreate();
+				}
+			});
+
+			alert.show();
+		}
+
 	}
 
 	@Override

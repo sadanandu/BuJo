@@ -13,6 +13,7 @@
     <string name="task">Task Name</string>
     <string name="task_description">Task Description</string>
     <string name="note">Note Name</string>
+    <string name="noteicondescription">Note Icon</string>
     <string name="note_description">Note Description</string>
     <string name="action_delete_task">Delete Task</string>
     <string name="action_delete_subtask">Delete Sub Task</string>

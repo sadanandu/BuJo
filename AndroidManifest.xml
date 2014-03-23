@@ -63,6 +63,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.bujo.Today" />
         </activity>
+        <activity
+            android:name="com.example.bujo.EditNote"
+            android:label="@string/title_activity_edit_note"
+            android:parentActivityName="com.example.bujo.Today" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bujo.Today" />
+        </activity>
     </application>
 
 </manifest>

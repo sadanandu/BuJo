@@ -1,7 +1,6 @@
 package com.example.bujo;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.text.ParseException;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,38 +13,48 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.bujo.model.Note;
+import com.example.bujo.util.ApplicationConstants;
 
-public class AddNote extends Activity {
+public class EditNote extends Activity {
 
-	public static Boolean NOTE_CREATED = false;
 	public Note currentNote;
 	public EditText noteName;
 	public EditText noteDescription;
+	public long date;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_note);
-		NOTE_CREATED = false;
+		setContentView(R.layout.activity_edit_note);
+		// Show the Up button in the action bar.
 		noteName = (EditText) findViewById(R.id.add_note_name);
 		noteDescription = (EditText) findViewById(R.id.add_note_description);
 		noteName.requestFocus();
-		ConfigureTextChangedListener(noteName);
+    	ConfigureTextChangedListener(noteName);
+    	ConfigureTextChangedListener(noteDescription);
+    	currentNote = (Note) this.getIntent().getParcelableExtra(ApplicationConstants.NOTE_OBJECT);
+    	
+    	if (currentNote != null){
+    		noteName.setText(currentNote.getName());
+    		noteDescription.setText(currentNote.getDescription());
+    	}
+
 		setupActionBar();
-		
 	}
 
 	/**
 	 * Set up the {@link android.app.ActionBar}.
 	 */
 	private void setupActionBar() {
+
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.add_note, menu);
+		getMenuInflater().inflate(R.menu.edit_note, menu);
 		return true;
 	}
 
@@ -53,9 +62,6 @@ public class AddNote extends Activity {
 		editText.addTextChangedListener(new TextWatcher(){
     		@Override
     		public void afterTextChanged(Editable s){
-    			if (s.length() > 0){
-    				NOTE_CREATED = true;    				
-    			} 
     		}
 
     		@Override
@@ -69,6 +75,7 @@ public class AddNote extends Activity {
     	});
 	}
 
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -81,24 +88,21 @@ public class AddNote extends Activity {
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
 			NavUtils.navigateUpFromSameTask(this);
-			AddNoteToDB(this.getCurrentFocus());
+			SaveNote(this.getCurrentFocus());
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void AddNoteToDB(View view){
-		if (NOTE_CREATED == true){
-			String name = noteName.getText().toString();
-			String desc = noteDescription.getText().toString();
-			long milliseconds = 0;
-			Calendar cal = Calendar.getInstance();
-			Date date = cal.getTime();
-			milliseconds = date.getTime();
-			BujoDbHandler dbHandler = new BujoDbHandler(view.getContext());
-			currentNote = new Note(name, desc, milliseconds);
-			dbHandler.addNote(currentNote);
-		}
+	public void SaveNote(View view){
+		//Intent intent = new Intent(this, Today.class);
+		String name = noteName.getText().toString();
+		String desc = noteDescription.getText().toString();
+		BujoDbHandler dbHandler = new BujoDbHandler(view.getContext());
+		currentNote.setName(name);
+		currentNote.setDescription(desc);
+		dbHandler.saveNote(currentNote);
 	}
-		
+
+	
 }
