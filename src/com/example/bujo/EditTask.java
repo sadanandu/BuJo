@@ -44,8 +44,8 @@ public class EditTask extends Activity{
     	currentTask = (Task) this.getIntent().getParcelableExtra(ApplicationConstants.TASK_OBJECT);
     	
     	if (currentTask != null){
-    		taskName.setText(currentTask.getTaskName());
-    		taskDescription.setText(currentTask.getTaskDescription());
+    		taskName.setText(currentTask.getName());
+    		taskDescription.setText(currentTask.getDescription());
     		Calendar cal = Calendar.getInstance();
     		cal.setTimeInMillis(currentTask.getDate());
     		out.println(cal.get(cal.DATE));
@@ -129,8 +129,8 @@ public class EditTask extends Activity{
 		} // You will need try/catch around this
 
 		BujoDbHandler taskHandler = new BujoDbHandler(view.getContext());
-		currentTask.setTaskName(name);
-		currentTask.setTaskDescription(desc);
+		currentTask.setName(name);
+		currentTask.setDescription(desc);
 		currentTask.setDate(milliseconds);
 		taskHandler.saveTask(currentTask);
 	}

@@ -18,7 +18,7 @@ import static java.lang.System.out;
 public class BujoDbHandler extends SQLiteOpenHelper{
 	// If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "BuJo1.db";
+    public static final String DATABASE_NAME = "BuJo.db";
 
     public static final String TABLE_TASK = "tasks";
     public static final String KEY_ID = "_id";
@@ -101,8 +101,8 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     public void addNote(Note note){
     	SQLiteDatabase db = this.getWritableDatabase();
     	ContentValues values = new ContentValues();
-    	values.put(KEY_NOTE, note.getNoteName());
-    	values.put(KEY_NOTEDESCRIPTION, note.getNoteDescription());
+    	values.put(KEY_NOTE, note.getName());
+    	values.put(KEY_NOTEDESCRIPTION, note.getDescription());
     	values.put(KEY_DATE, note.getDate());
     	db.insert(TABLE_NOTE, null, values);
     	db.close();
@@ -113,8 +113,8 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	SQLiteDatabase db = this.getWritableDatabase();
     	ContentValues values = new ContentValues();
     	//values.put(KEY_ID, task.get_id());
-    	values.put(KEY_TASK, task.getTaskName());
-    	values.put(KEY_DESCRIPTION, task.getTaskDescription());
+    	values.put(KEY_TASK, task.getName());
+    	values.put(KEY_DESCRIPTION, task.getDescription());
     	values.put(KEY_DATE, task.getDate());
     	values.put(KEY_ISDONE, task.getIsDone());
     	db.insert(TABLE_TASK, null, values);
@@ -145,15 +145,13 @@ public class BujoDbHandler extends SQLiteOpenHelper{
 		noteDate = c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE));
 		Note note = new Note();
 		note.set_id(id);
-		note.setNoteName(noteName);
-		note.setNoteDescription(noteDescription);
+		note.setName(noteName);
+		note.setDescription(noteDescription);
 		note.setDate(noteDate);
 		db.close();
 		return note;
     }
 
-    
-    
     public Task getTask(int id){
     	SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery("select * from tasks where _id = ?", new String[] {Integer.toString(id)});
@@ -166,8 +164,8 @@ public class BujoDbHandler extends SQLiteOpenHelper{
 		isDone = c.getString(c.getColumnIndex(BujoDbHandler.KEY_ISDONE));
 		Task task = new Task();
 		task.set_id(id);
-		task.setTaskName(taskName);
-		task.setTaskDescription(taskDescription);
+		task.setName(taskName);
+		task.setDescription(taskDescription);
 		task.setDate(taskDate);
 		task.setIsDone(isDone);
 		db.close();
@@ -209,8 +207,8 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     			do{
     				Note newNote = new Note();
     				newNote.set_id(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID)));
-    				newNote.setNoteName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_NOTE)));
-    				newNote.setNoteDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_NOTEDESCRIPTION)));
+    				newNote.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_NOTE)));
+    				newNote.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_NOTEDESCRIPTION)));
     				newNote.setDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE)));
     				notes.add(newNote);
     			}while(c.moveToNext());
@@ -224,16 +222,22 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     public ArrayList <Bullet> getTodayTasks(){
     	SQLiteDatabase db = this.getReadableDatabase();
     	try{
+    		Cursor c1 = db.rawQuery("select date('now')", new String[0]);
+    		c1.moveToFirst();
     		Cursor c = db.rawQuery("select * from tasks where date(datetime(date/1000, 'unixepoch')) = date('now')", new String[0]);
     		c.moveToFirst();
     		ArrayList<Bullet> tasks = new ArrayList<Bullet>();
+    		out.println("*******************************");
+    		out.println("Total tasks");
+    		out.println(c.getCount());
+
     		if (c.getCount() > 0){
     			do{
     			//out.println(Integer.toString(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID))) + " " + c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)) + "  " + c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)) + "  " +  Long.toString(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE))) );
     				Task newTask = new Task();
     				newTask.set_id(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID)));
-    				newTask.setTaskName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)));
-    				newTask.setTaskDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
+    				newTask.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)));
+    				newTask.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
     				newTask.setDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE)));
     				newTask.setIsDone(c.getString(c.getColumnIndex(BujoDbHandler.KEY_ISDONE)));
     				tasks.add(newTask);
@@ -279,8 +283,8 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     		do{
     			Task newTask = new Task();
     			newTask.set_id(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID)));
-    			newTask.setTaskName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)));
-    			newTask.setTaskDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
+    			newTask.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)));
+    			newTask.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
     			newTask.setDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE)));
     			tasks.add(newTask);
     		}while(c.moveToNext());
@@ -294,8 +298,8 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	SQLiteDatabase db = this.getWritableDatabase();
     	ContentValues values = new ContentValues();
     	//values.put(KEY_ID, task.get_id());
-    	values.put(KEY_TASK, task.getTaskName());
-    	values.put(KEY_DESCRIPTION, task.getTaskDescription());
+    	values.put(KEY_TASK, task.getName());
+    	values.put(KEY_DESCRIPTION, task.getDescription());
     	values.put(KEY_DATE, task.getDate());
     	values.put(KEY_ISDONE, task.getIsDone());
     	db.update(TABLE_TASK, values, KEY_ID+" = ?", new String[] { String.valueOf(task.get_id())});
@@ -306,8 +310,8 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	SQLiteDatabase db = this.getWritableDatabase();
     	ContentValues values = new ContentValues();
     	//values.put(KEY_ID, task.get_id());
-    	values.put(KEY_NOTE, note.getNoteName());
-    	values.put(KEY_NOTEDESCRIPTION, note.getNoteDescription());
+    	values.put(KEY_NOTE, note.getName());
+    	values.put(KEY_NOTEDESCRIPTION, note.getDescription());
     	values.put(KEY_DATE, note.getDate());
     	db.update(TABLE_NOTE, values, KEY_ID+" = ?", new String[] { String.valueOf(note.get_id())});
     	db.close();

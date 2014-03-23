@@ -327,7 +327,7 @@ public class Today extends Activity implements View.OnTouchListener{
 				} );
 				if (values.get(position).getClass().getName().equals("com.example.bujo.model.Task")){
 					Task tempTask = (Task)(values.get(position));
-					holder.textForTask.setText(tempTask.getTaskName());
+					holder.textForTask.setText(tempTask.getName());
 					holder.textForTask.setTag(tempTask.get_id());
 					if (tempTask.getIsDone() == "Yes"){
 						holder.checkBoxForTask.setChecked(true);
