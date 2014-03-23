@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.bujo"
+    android:debuggable="true"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="18"
+        android:targetSdkVersion="19" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.example.bujo.Today"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.bujo.AddTask"
+            android:label="@string/title_activity_add_task"
+            android:parentActivityName="com.example.bujo.Today" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bujo.Today" />
+        </activity>
+        <activity
+            android:name="com.example.bujo.AddNote"
+            android:label="@string/title_activity_add_note"
+            android:parentActivityName="com.example.bujo.Today" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bujo.Today" />
+        </activity>
+        <activity
+            android:name="com.example.bujo.EditTask"
+            android:label="@string/title_activity_edit_task"
+            android:parentActivityName="com.example.bujo.Today" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bujo.Today" />
+        </activity>
+        <activity
+            android:name="com.example.bujo.EditSubTask"
+            android:label="@string/title_activity_edit_sub_task"
+            android:parentActivityName="com.example.bujo.Today" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bujo.Today" />
+        </activity>
+        <activity
+            android:name="com.example.bujo.AddSubTask"
+            android:label="@string/title_activity_add_sub_task"
+            android:parentActivityName="com.example.bujo.Today" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bujo.Today" />
+        </activity>
+    </application>
+
+</manifest>

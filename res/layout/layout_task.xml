@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+   
+   <LinearLayout
+        android:id="@+id/linearLayoutForTask"
+        android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal">
+    
+    <CheckBox android:id="@+id/checkBox"
+    	android:layout_width="30dp"
+    	android:layout_height="30dp"
+    	android:focusable="false"/>
+   
+	<TextView 
+	    android:id="@+id/textView"
+    	android:layout_width="fill_parent"
+    	android:layout_height="30dp"
+    	android:layout_marginLeft="5dp"
+    	android:onClick="EditThisTask"
+    	android:clickable="true"/>
+	</LinearLayout>
+	
+   <LinearLayout
+        android:id="@+id/linearLayoutForSubTask"
+        android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="vertical"
+    	android:layout_marginLeft="45dp"/>
+	
+</LinearLayout>
+

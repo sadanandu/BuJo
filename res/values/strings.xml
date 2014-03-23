@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BuJo</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_add_task">Add Task</string>
+    <string name="action_add_event">Add Event</string>
+    <string name="action_add_note">Add Note</string>
+    <string name="title_activity_add_task">AddTask</string>
+    <string name="title_activity_edit_task">EditTask</string>
+    <string name="title_activity_add_note">AddNote</string>
+    <string name="title_activity_edit_note">EditNote</string>
+    <string name="task">Task Name</string>
+    <string name="task_description">Task Description</string>
+    <string name="note">Note Name</string>
+    <string name="note_description">Note Description</string>
+    <string name="action_delete_task">Delete Task</string>
+    <string name="action_delete_subtask">Delete Sub Task</string>
+    <string name="action_add_sub_task">Add Sub-Task</string>
+    <string name="title_activity_add_sub_task">Add Sub-Task</string>
+    <string name="title_activity_edit_sub_task">Edit Sub-Task</string>
+    <string name="action_search">Search your entries</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>

@@ -1,0 +1,38 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+      xmlns:yourapp="http://schemas.android.com/apk/res-auto"
+      >
+    <item
+        android:id="@+id/action_add_task"
+        android:icon="@drawable/task"
+        android:title="@string/action_add_task"
+        android:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_add_note"
+        android:icon="@drawable/note"
+        android:title="@string/action_add_note"
+        android:showAsAction="ifRoom"/>
+    
+    <item
+        android:id="@+id/action_add_event"
+        android:icon="@drawable/event"
+        android:title="@string/action_add_event"
+        android:showAsAction="ifRoom"/>
+    
+<!--     <item -->
+<!--         android:id="@+id/action_search" -->
+<!--         android:title="@string/action_search" -->
+<!--         android:icon="@drawable/search" -->
+<!--         yourapp:showAsAction="ifRoom/collapseActionView" -->
+<!--         yourapp:actionViewClass="android.support.v7.widget.SearchView"/> -->
+    
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+   
+</menu>
+
+
+
