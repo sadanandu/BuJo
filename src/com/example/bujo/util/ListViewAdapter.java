@@ -10,8 +10,8 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -20,8 +20,8 @@ import android.widget.TextView;
 
 import com.example.bujo.R;
 import com.example.bujo.activity.AddSubTask;
-import com.example.bujo.activity.Today;
 import com.example.bujo.model.Bullet;
+import com.example.bujo.model.Event;
 import com.example.bujo.model.Note;
 import com.example.bujo.model.SubTask;
 import com.example.bujo.model.Task;
@@ -59,6 +59,9 @@ public class ListViewAdapter extends BaseAdapter{
 		}
 		if (values.get(position).getClass().getName().equals("com.example.bujo.model.Note")){
 			return this.NOTEROW;
+		}
+		if (values.get(position).getClass().getName().equals("com.example.bujo.model.Event")){
+			return this.EVENTROW;
 		}
 		return -1;
 	}
@@ -213,6 +216,37 @@ public class ListViewAdapter extends BaseAdapter{
 			}
 			return holder.rowView;
 		}
+		
+		if(rowType == EVENTROW){
+			if (convertView == null){
+				final View rowView = this.inflater.inflate(R.layout.layout_event, parent, false);
+				rowView.setClickable(true);
+				convertView = rowView;
+				holder = new ViewHolder();
+				holder.rowView = rowView;
+				holder.textForTask = (TextView) rowView.findViewById(R.id.textView);
+				convertView.setTag(holder);
+			}
+			else{
+				holder = (ViewHolder)convertView.getTag();
+			}
+			if (values != null){
+				Event tempEvent = (Event)(values.get(position));
+				holder.textForTask.setText(tempEvent.getName());
+				holder.textForTask.setTag(tempEvent.get_id());
+				holder.textForTask.setOnLongClickListener(new OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View v) {
+						// TODO Auto-generated method stub
+						showOptionsMenuForEvent((TextView)v, positionOfRow);
+						return true;
+					}
+				});
+		
+			}
+			return holder.rowView;
+		}
+
 		return convertView;
 	}
 
@@ -258,55 +292,6 @@ public class ListViewAdapter extends BaseAdapter{
 		alert.show();
 	}
 	
-	public class TaskDeleter extends AsyncTask<Integer, Void, Void>{
-		@Override
-		protected Void doInBackground(Integer...taskIds) {
-			BujoDbHandler taskHandler = new BujoDbHandler(context);
-			taskHandler.deleteTask(taskIds[0]);
-			return null;
-		}
-		
-		protected void onPostExecute(){
-		}
-	}
-	
-	public class NoteDeleter extends AsyncTask<Integer, Void, Void>{
-		@Override
-		protected Void doInBackground(Integer...noteIds) {
-			BujoDbHandler dbHandler = new BujoDbHandler(context);
-			dbHandler.deleteNote(noteIds[0]);
-			return null;
-		}
-		
-		protected void onPostExecute(){
-		}
-	}
-
-	public class SubTaskCreator extends AsyncTask<Task, Void, Void>{
-		@Override
-		protected Void doInBackground(Task...tasks) {
-			Intent intent = new Intent(context, AddSubTask.class);
-			intent.putExtra(ApplicationConstants.TASK_OBJECT, tasks[0]);
-	    	context.startActivity(intent);
-	    	return null;
-		}
-		
-		protected void onPostExecute(){
-		}
-	}
-
-	
-	public class SubTaskDeleter extends AsyncTask<Integer, Void, Void>{
-		@Override
-		protected Void doInBackground(Integer...subtaskids) {
-			BujoDbHandler taskHandler = new BujoDbHandler(context);
-			taskHandler.deleteSubTask(subtaskids[0]);			
-			return null;
-		}
-		
-		protected void onPostExecute(){
-		}
-	}
 	
 	
 	@SuppressWarnings("deprecation")
@@ -341,4 +326,85 @@ public class ListViewAdapter extends BaseAdapter{
 		alert.show();
 	}
 
+	@SuppressWarnings("deprecation")
+	public void showOptionsMenuForEvent(final TextView v, final int position){
+		AlertDialog alert = new AlertDialog.Builder(this.context).create();
+		alert.setTitle("Event Actions");
+		alert.setButton("Delete Event", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				// TODO Auto-generated method stub
+				values.remove(position);
+				new EventDeleter().execute(Integer.valueOf(v.getTag().toString()));
+				notifyDataSetChanged();
+			}
+		});
+
+		alert.show();
+	}
+
+	
+	public class TaskDeleter extends AsyncTask<Integer, Void, Void>{
+		@Override
+		protected Void doInBackground(Integer...taskIds) {
+			BujoDbHandler taskHandler = new BujoDbHandler(context);
+			taskHandler.deleteTask(taskIds[0]);
+			return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+	}
+	
+	public class NoteDeleter extends AsyncTask<Integer, Void, Void>{
+		@Override
+		protected Void doInBackground(Integer...noteIds) {
+			BujoDbHandler dbHandler = new BujoDbHandler(context);
+			dbHandler.deleteNote(noteIds[0]);
+			return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+	}
+
+	public class EventDeleter extends AsyncTask<Integer, Void, Void>{
+		@Override
+		protected Void doInBackground(Integer...noteIds) {
+			BujoDbHandler dbHandler = new BujoDbHandler(context);
+			dbHandler.deleteEvent(noteIds[0]);
+			return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+	}
+
+	
+	public class SubTaskCreator extends AsyncTask<Task, Void, Void>{
+		@Override
+		protected Void doInBackground(Task...tasks) {
+			Intent intent = new Intent(context, AddSubTask.class);
+			intent.putExtra(ApplicationConstants.TASK_OBJECT, tasks[0]);
+	    	context.startActivity(intent);
+	    	return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+	}
+
+	public class SubTaskDeleter extends AsyncTask<Integer, Void, Void>{
+		@Override
+		protected Void doInBackground(Integer...subtaskids) {
+			BujoDbHandler taskHandler = new BujoDbHandler(context);
+			taskHandler.deleteSubTask(subtaskids[0]);			
+			return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+	}
+
+	
 }

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.bujo.R;
 import com.example.bujo.model.Bullet;
+import com.example.bujo.model.Event;
 import com.example.bujo.model.Note;
 import com.example.bujo.model.SubTask;
 import com.example.bujo.model.Task;
@@ -53,10 +54,10 @@ public class Today extends Activity implements View.OnTouchListener{
 			}
 		};
 
-		DisplayTasks();
+		DisplayBullets();
 	}
 
-	public void DisplayTasks(){
+	public void DisplayBullets(){
 		new PopulateJournalEntries().execute(this);
 		}
 	@Override
@@ -77,7 +78,8 @@ public class Today extends Activity implements View.OnTouchListener{
 			//Toast.makeText(getApplicationContext(), "adding note", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_add_event:
-			Toast.makeText(getApplicationContext(), "adding event", Toast.LENGTH_SHORT).show();
+			new EventCreator().execute();
+			//Toast.makeText(getApplicationContext(), "adding event", Toast.LENGTH_SHORT).show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -103,6 +105,7 @@ public class Today extends Activity implements View.OnTouchListener{
 			ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 			bullets = dbHandler.getTodayTasks();
 			bullets.addAll(dbHandler.getTodayNotes());
+			bullets.addAll(dbHandler.getTodayEvents());
 			return GetSorted(bullets);
 		}
 		
@@ -120,13 +123,6 @@ public class Today extends Activity implements View.OnTouchListener{
 		new TaskEditor().execute(taskObject);
 	}
 
-	public void EditThisNote(View v){
-		TextView textView = (TextView) v.findViewById(R.id.textView);
-		int noteId =  Integer.valueOf(textView.getTag().toString());
-		Note noteObject = dbHelper.getNoteObjectFor(noteId, getApplicationContext());
-		new NoteEditor().execute(noteObject);
-	}
-	
 	public void EditSubTask(View v){
 		TextView textViewSubTask = (TextView) v.findViewById(R.id.textViewForSubTask);
 		int subTaskId =  Integer.valueOf(textViewSubTask.getTag().toString());
@@ -134,11 +130,38 @@ public class Today extends Activity implements View.OnTouchListener{
 		new SubTaskEditor().execute(subTaskObject);
     }
 	
+	public void EditThisNote(View v){
+		TextView textView = (TextView) v.findViewById(R.id.textView);
+		int noteId =  Integer.valueOf(textView.getTag().toString());
+		Note noteObject = dbHelper.getNoteObjectFor(noteId, getApplicationContext());
+		new NoteEditor().execute(noteObject);
+	}
+
+	public void EditThisEvent(View v){
+		TextView textView = (TextView) v.findViewById(R.id.textView);
+		int eventId =  Integer.valueOf(textView.getTag().toString());
+		Event eventObject = dbHelper.getEventObjectFor(eventId, getApplicationContext());
+		new EventEditor().execute(eventObject);
+	}
+	
 	private class TaskEditor extends AsyncTask<Task, Void, Void>{
 		@Override
 		protected Void doInBackground(Task...tasks) {
 			Intent intent = new Intent(Today.this, EditTask.class);
 			intent.putExtra(ApplicationConstants.TASK_OBJECT, tasks[0]);
+	    	startActivity(intent);
+	    	return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+	}
+
+	private class SubTaskEditor extends AsyncTask<SubTask, Void, Void>{
+		@Override
+		protected Void doInBackground(SubTask...tasks) {
+			Intent intent = new Intent(Today.this, EditSubTask.class);
+			intent.putExtra(ApplicationConstants.SUB_TASK_OBJECT, tasks[0]);
 	    	startActivity(intent);
 	    	return null;
 		}
@@ -160,12 +183,11 @@ public class Today extends Activity implements View.OnTouchListener{
 		}
 	}
 
-	
-	private class SubTaskEditor extends AsyncTask<SubTask, Void, Void>{
+	private class EventEditor extends AsyncTask<Event, Void, Void>{
 		@Override
-		protected Void doInBackground(SubTask...tasks) {
-			Intent intent = new Intent(Today.this, EditSubTask.class);
-			intent.putExtra(ApplicationConstants.SUB_TASK_OBJECT, tasks[0]);
+		protected Void doInBackground(Event...events) {
+			Intent intent = new Intent(Today.this, EditEvent.class);
+			intent.putExtra(ApplicationConstants.EVENT_OBJECT, events[0]);
 	    	startActivity(intent);
 	    	return null;
 		}
@@ -173,6 +195,7 @@ public class Today extends Activity implements View.OnTouchListener{
 		protected void onPostExecute(){
 		}
 	}
+
 	
 	private class TaskCreator extends AsyncTask<Void, Void, Void>{
 		@Override
@@ -199,7 +222,20 @@ public class Today extends Activity implements View.OnTouchListener{
 		}
 		
 	}
-	
+
+	private class EventCreator extends AsyncTask<Void, Void, Void>{
+		@Override
+		protected Void doInBackground(Void...voids) {
+			Intent intent = new Intent(Today.this, AddEvent.class);
+	    	startActivity(intent);
+	    	return null;
+		}
+		
+		protected void onPostExecute(){
+		}
+		
+	}
+
 	
 	public class MyGestureDetector extends SimpleOnGestureListener{
 

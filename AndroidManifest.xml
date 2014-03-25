@@ -32,8 +32,24 @@
                 android:value="com.example.bujo.Today" />
         </activity>
         <activity
+            android:name="com.example.bujo.activity.AddSubTask"
+            android:label="@string/title_activity_add_sub_task"
+            android:parentActivityName="com.example.bujo.activity.Today" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bujo.Today" />
+        </activity>
+        <activity
             android:name="com.example.bujo.activity.AddNote"
             android:label="@string/title_activity_add_note"
+            android:parentActivityName="com.example.bujo.activity.Today" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bujo.Today" />
+        </activity>
+        <activity
+            android:name="com.example.bujo.activity.AddEvent"
+            android:label="@string/title_activity_add_event"
             android:parentActivityName="com.example.bujo.activity.Today" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -56,20 +72,20 @@
                 android:value="com.example.bujo.Today" />
         </activity>
         <activity
-            android:name="com.example.bujo.activity.AddSubTask"
-            android:label="@string/title_activity_add_sub_task"
-            android:parentActivityName="com.example.bujo.activity.Today" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.bujo.Today" />
-        </activity>
-        <activity
             android:name="com.example.bujo.activity.EditNote"
             android:label="@string/title_activity_edit_note"
             android:parentActivityName="com.example.bujo.activity.Today" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.bujo.Today" />
+        </activity>
+        <activity
+            android:name="com.example.bujo.activity.EditEvent"
+            android:label="@string/title_activity_edit_event"
+            android:parentActivityName="com.example.bujo.activity.Today" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.bujo.activity.Today" />
         </activity>
     </application>
 
