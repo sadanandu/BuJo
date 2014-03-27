@@ -7,9 +7,13 @@
    	<TextView 
     	android:id="@+id/textView"
    		android:layout_width="fill_parent"
-   		android:layout_height="30dp"
+   		android:layout_height="48dp"
    		android:layout_marginLeft="5dp"
    		android:onClick="EditThisNote"
    		android:clickable="true"
-   		android:drawableLeft="@drawable/note"/>
+   		android:drawableLeft="@drawable/note"
+   		android:drawablePadding="5dp"
+   		android:ellipsize="end"
+   		android:textSize="16sp"
+   		android:gravity="center_vertical"/>
 </LinearLayout>

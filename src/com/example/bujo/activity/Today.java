@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +39,7 @@ public class Today extends Activity implements View.OnTouchListener{
 	private static final int SWIPE_THRESHOLD_VELOCITY = 100;
 	private GestureDetector gestureDetetctor;
 	View.OnTouchListener gestureListener;
-	public static final BuJoDbHelper dbHelper = new BuJoDbHelper();
+	public static BuJoDbHelper dbHelper;
 	
 	
 	@Override
@@ -53,18 +55,22 @@ public class Today extends Activity implements View.OnTouchListener{
 				return gestureDetetctor.onTouchEvent(arg1);
 			}
 		};
-
+		dbHelper  = new BuJoDbHelper(getApplicationContext());
 		DisplayBullets();
 	}
 
 	public void DisplayBullets(){
 		new PopulateJournalEntries().execute(this);
 		}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.today, menu);
-		return true;
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -81,6 +87,9 @@ public class Today extends Activity implements View.OnTouchListener{
 			new EventCreator().execute();
 			//Toast.makeText(getApplicationContext(), "adding event", Toast.LENGTH_SHORT).show();
 			return true;
+//		case R.id.action_search:
+//			Toast.makeText(getApplicationContext(), "searching", Toast.LENGTH_SHORT).show();
+//			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -119,28 +128,28 @@ public class Today extends Activity implements View.OnTouchListener{
 	public void EditThisTask(View v){
 		TextView textView = (TextView) v.findViewById(R.id.textView);
 		int taskId =  Integer.valueOf(textView.getTag().toString());
-		Task taskObject = dbHelper.getTaskObjectFor(taskId, getApplicationContext());
+		Task taskObject = dbHelper.getTaskObjectFor(taskId);
 		new TaskEditor().execute(taskObject);
 	}
 
 	public void EditSubTask(View v){
 		TextView textViewSubTask = (TextView) v.findViewById(R.id.textViewForSubTask);
 		int subTaskId =  Integer.valueOf(textViewSubTask.getTag().toString());
-		SubTask subTaskObject = dbHelper.getSubTaskObjectFor(subTaskId, getApplicationContext());
+		SubTask subTaskObject = dbHelper.getSubTaskObjectFor(subTaskId);
 		new SubTaskEditor().execute(subTaskObject);
     }
 	
 	public void EditThisNote(View v){
 		TextView textView = (TextView) v.findViewById(R.id.textView);
 		int noteId =  Integer.valueOf(textView.getTag().toString());
-		Note noteObject = dbHelper.getNoteObjectFor(noteId, getApplicationContext());
+		Note noteObject = dbHelper.getNoteObjectFor(noteId);
 		new NoteEditor().execute(noteObject);
 	}
 
 	public void EditThisEvent(View v){
 		TextView textView = (TextView) v.findViewById(R.id.textView);
 		int eventId =  Integer.valueOf(textView.getTag().toString());
-		Event eventObject = dbHelper.getEventObjectFor(eventId, getApplicationContext());
+		Event eventObject = dbHelper.getEventObjectFor(eventId);
 		new EventEditor().execute(eventObject);
 	}
 	

@@ -33,7 +33,7 @@ public class ListViewAdapter extends BaseAdapter{
 	private static final int TASKROW = 0;
 	private static final int NOTEROW = 1;
 	private static final int EVENTROW = 2;
-	public BuJoDbHelper dbHelper = new BuJoDbHelper();
+	public BuJoDbHelper dbHelper;
 	
 	static class ViewHolder{
 		View rowView, subLine;
@@ -49,6 +49,7 @@ public class ListViewAdapter extends BaseAdapter{
 		this.context = context;
 		LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.inflater = inflater;
+		dbHelper = new BuJoDbHelper(context);
 	}
 	
 	@Override
@@ -284,7 +285,7 @@ public class ListViewAdapter extends BaseAdapter{
 			public void onClick(DialogInterface arg0, int arg1) {
 				// TODO Auto-generated method stub
 	        	int taskId =  Integer.valueOf(v.getTag().toString());
-				Task taskObject = dbHelper.getTaskObjectFor(taskId, context);
+				Task taskObject = dbHelper.getTaskObjectFor(taskId);
 	        	new SubTaskCreator().execute(taskObject);
 			}
 		});
