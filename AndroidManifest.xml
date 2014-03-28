@@ -87,7 +87,7 @@
                 android:value="com.example.bujo.activity.Today" />
         </activity>
         <activity
-            android:name="com.example.bujo.SearchResultsActivity"
+            android:name="com.example.bujo.activity.SearchResultsActivity"
             android:parentActivityName="com.example.bujo.activity.Today"
             android:label="@string/title_activity_search_results">
             <intent-filter>
@@ -99,7 +99,7 @@
         </activity>
         <meta-data
             android:name="android.app.default_searchable" 
-            android:value=".SearchResultsActivity"/>
+            android:value="com.example.bujo.activity.SearchResultsActivity"/>
     </application>
 
 </manifest>

@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+
+import com.example.bujo.util.BujoDbHandler;
 
 import android.R;
 import android.content.ContentValues;
@@ -21,10 +24,12 @@ public class DataBaseTable {
     private static final String TAG = "BuJo";
 
     //The columns we'll include in the dictionary table
-    public static final String COL_WORD = "WORD";
-    public static final String COL_DEFINITION = "DEFINITION";
+    public static final String COL_ID = "BULLETID";
+    public static final String COL_BULLET_TYPE = "TYPE";
+    public static final String COL_NAME = "NAME";
+    public static final String COL_DESCRIPTION = "DESCRIPTION";
 
-    private static final String DATABASE_NAME = "DICTIONARY";
+    private static final String DATABASE_NAME = "BuJoIndex";
     private static final String FTS_VIRTUAL_TABLE = "FTS";
     private static final int DATABASE_VERSION = 1;
 
@@ -32,6 +37,7 @@ public class DataBaseTable {
 
     public DataBaseTable(Context context) {
         mDatabaseOpenHelper = new DatabaseOpenHelper(context);
+        mDatabaseOpenHelper.getWritableDatabase();
     }
 
     private static class DatabaseOpenHelper extends SQLiteOpenHelper {
@@ -41,9 +47,11 @@ public class DataBaseTable {
 
         private static final String FTS_TABLE_CREATE =
                     "CREATE VIRTUAL TABLE " + FTS_VIRTUAL_TABLE +
-                    " USING fts3 (" +
-                    COL_WORD + ", " +
-                    COL_DEFINITION + ")";
+                    " USING fts3 (_id, " +
+                    COL_ID + ", " +
+                    COL_BULLET_TYPE + ", " +
+                    COL_NAME + ", " +
+                    COL_DESCRIPTION + ")";
 
         DatabaseOpenHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -54,7 +62,7 @@ public class DataBaseTable {
         public void onCreate(SQLiteDatabase db) {
             mDatabase = db;
             mDatabase.execSQL(FTS_TABLE_CREATE);
-            loadDictionary();
+            loadBulletEntries();
         }
 
         @Override
@@ -65,49 +73,41 @@ public class DataBaseTable {
             onCreate(db);
         }
         
-        private void loadDictionary() {
+        private void loadBulletEntries() {
             new Thread(new Runnable() {
                 public void run() {
-                    try {
-                        loadWords();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                        loadNotes();
+      
                 }
             }).start();
         }
 
-        private void loadWords() throws IOException {
-//        	final Resources resources = mHelperContext.getResources();
-//        	InputStream inputStream = resources.openRawResource(R.raw.);
-//        	BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//
-//        	try {
-//        		String line;
-//        		while ((line = reader.readLine()) != null) {
-//        			String[] strings = TextUtils.split(line, "-");
-//        			if (strings.length < 2) continue;
-//        			long id = addWord(strings[0].trim(), strings[1].trim());
-//        			if (id < 0) {
-//        				Log.e(TAG, "unable to add word: " + strings[0].trim());
-//        			}
-//        		}
-//        	} finally {
-//        		reader.close();
-//        	}
+        private void loadNotes(){
+        	BujoDbHandler dbHandler = new BujoDbHandler(mHelperContext);
+        	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+        	bullets = dbHandler.getAllNotes();
+        	int i = 0;
+        	if(bullets != null){
+        	while(i < bullets.size()){
+        		Bullet aBullet = bullets.get(i);
+        		addNote(aBullet.get_id(), aBullet.getClass().getName(), aBullet.getName(), aBullet.getDescription());
+        		i = i +1;
+        	}}
         }
 
-        public long addWord(String word, String definition) {
+        public long addNote(int id, String type, String name, String description) {
         	ContentValues initialValues = new ContentValues();
-        	initialValues.put(COL_WORD, word);
-        	initialValues.put(COL_DEFINITION, definition);
+        	initialValues.put(COL_ID, id);
+        	initialValues.put(COL_BULLET_TYPE, type);
+        	initialValues.put(COL_NAME, name);
+        	initialValues.put(COL_DESCRIPTION, description);
 
         	return mDatabase.insert(FTS_VIRTUAL_TABLE, null, initialValues);
         }
     }
     
-    public Cursor getWordMatches(String query, String[] columns) {
-        String selection = COL_WORD + " MATCH ?";
+    public Cursor getBulletMatches(String query, String[] columns) {
+        String selection = COL_NAME + " MATCH ?";
         String[] selectionArgs = new String[] {query+"*"};
 
         return query(selection, selectionArgs, columns);

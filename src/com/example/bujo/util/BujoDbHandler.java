@@ -309,6 +309,33 @@ public class BujoDbHandler extends SQLiteOpenHelper{
    	       }
     }
 
+//    public ArrayList <Bullet> getTasksContaining(String queryString){
+//    	SQLiteDatabase db = this.getReadableDatabase();
+//    	try{
+//    		Cursor c1 = db.rawQuery("select date('now')", new String[0]);
+//    		c1.moveToFirst();
+//    		Cursor c = db.rawQuery("select * from tasks where date(datetime(date/1000, 'unixepoch')) = date('now')", new String[0]);
+//    		c.moveToFirst();
+//    		ArrayList<Bullet> tasks = new ArrayList<Bullet>();
+//    		if (c.getCount() > 0){
+//    			do{
+//    			//out.println(Integer.toString(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID))) + " " + c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)) + "  " + c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)) + "  " +  Long.toString(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE))) );
+//    				Task newTask = new Task();
+//    				newTask.set_id(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID)));
+//    				newTask.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)));
+//    				newTask.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
+//    				newTask.setDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE)));
+//    				newTask.setIsDone(c.getString(c.getColumnIndex(BujoDbHandler.KEY_ISDONE)));
+//    				tasks.add(newTask);
+//    			}while(c.moveToNext());
+//    		}
+//    		return tasks;
+//    	}catch (Exception e){
+//    	     return null;
+//    	 }
+//    }
+    
+    
     public ArrayList <Bullet> getAllTasks(){
     	SQLiteDatabase db = this.getReadableDatabase();
     	try{
@@ -328,6 +355,27 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	     return null;
     	 }
 	}
+
+    public ArrayList <Bullet> getAllNotes(){
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	try{
+    		Cursor c = db.rawQuery("select * from notes", new String [0]);
+    		c.moveToFirst();
+    		ArrayList<Bullet> notes = new ArrayList<Bullet>();
+    		do{
+    			Note newNote = new Note();
+    			newNote.set_id(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID)));
+    			newNote.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_NOTE)));
+    			newNote.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
+    			newNote.setDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE)));
+    			notes.add(newNote);
+    		}while(c.moveToNext());
+    		return notes;
+    	}catch (Exception e){
+    	     return null;
+    	 }
+	}
+
     
     public void deleteTask(int taskId){
     	SQLiteDatabase db = this.getWritableDatabase();

@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.bujo.R;
 import com.example.bujo.activity.AddSubTask;
+import com.example.bujo.activity.Today;
 import com.example.bujo.model.Bullet;
 import com.example.bujo.model.Event;
 import com.example.bujo.model.Note;
@@ -205,6 +207,15 @@ public class ListViewAdapter extends BaseAdapter{
 				Note tempNote = (Note)(values.get(position));
 				holder.textForTask.setText(tempNote.getName());
 				holder.textForTask.setTag(tempNote.get_id());
+				holder.textForTask.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						((Today) context).EditThisNote(v);
+					}
+				});
+				
 				holder.textForTask.setOnLongClickListener(new OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View v) {
