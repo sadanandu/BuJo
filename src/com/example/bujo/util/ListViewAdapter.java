@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.example.bujo.R;
 import com.example.bujo.activity.AddSubTask;
 import com.example.bujo.activity.Today;
+import com.example.bujo.fragment.BulletFragment;
 import com.example.bujo.model.Bullet;
 import com.example.bujo.model.Event;
 import com.example.bujo.model.Note;
@@ -32,6 +33,7 @@ public class ListViewAdapter extends BaseAdapter{
 	private final Context context;
 	private final ArrayList<Bullet> values;
 	private final LayoutInflater inflater;
+	private final BulletFragment fragment;
 	private static final int TASKROW = 0;
 	private static final int NOTEROW = 1;
 	private static final int EVENTROW = 2;
@@ -43,14 +45,14 @@ public class ListViewAdapter extends BaseAdapter{
 		CheckBox checkBoxForTask, checkBoxForSubTask;
 		LinearLayout layoutForSubTask;
 	}
-
 	
-	public ListViewAdapter(ArrayList<Bullet> values, Context context){
+	public ListViewAdapter(ArrayList<Bullet> values, Context context, BulletFragment fragment){
 		super();
 		this.values = values;
 		this.context = context;
 		LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.inflater = inflater;
+		this.fragment = fragment;
 		dbHelper = new BuJoDbHelper(context);
 	}
 	
@@ -137,7 +139,15 @@ public class ListViewAdapter extends BaseAdapter{
 					holder.checkBoxForTask.setChecked(true);
 				}
 
-				
+				holder.textForTask.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						fragment.EditThisTask(v);
+					}
+				});
+			
 				holder.textForTask.setOnLongClickListener(new OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View v) {
@@ -161,6 +171,14 @@ public class ListViewAdapter extends BaseAdapter{
 					if (subtasks.get(i).getIsDone() == "Yes"){
 						checkBoxForSubTask.setChecked(true);
 					}
+					textViewForSubTask.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							fragment.EditSubTask(v);
+						}
+					});
 					
 					checkBoxForSubTask.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 						@Override
@@ -212,7 +230,7 @@ public class ListViewAdapter extends BaseAdapter{
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-						((Today) context).EditThisNote(v);
+						fragment.EditThisNote(v);
 					}
 				});
 				
@@ -246,6 +264,15 @@ public class ListViewAdapter extends BaseAdapter{
 				Event tempEvent = (Event)(values.get(position));
 				holder.textForTask.setText(tempEvent.getName());
 				holder.textForTask.setTag(tempEvent.get_id());
+				holder.textForTask.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						fragment.EditThisEvent(v);
+					}
+				});
+
 				holder.textForTask.setOnLongClickListener(new OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View v) {

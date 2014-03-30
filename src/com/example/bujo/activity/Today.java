@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bujo.R;
+import com.example.bujo.fragment.BulletFragment;
+import com.example.bujo.fragment.BulletFragment.OnFragmentInteractionListener;
 import com.example.bujo.model.Bullet;
 import com.example.bujo.model.Event;
 import com.example.bujo.model.Note;
@@ -32,7 +34,8 @@ import com.example.bujo.util.BuJoDbHelper;
 import com.example.bujo.util.BujoDbHandler;
 import com.example.bujo.util.ListViewAdapter;
 
-public class Today extends Activity implements View.OnTouchListener{
+public class Today extends FragmentActivity  implements View.OnTouchListener, OnFragmentInteractionListener{
+	
 
 	private static final int SWIPE_MAX_OFF_PATH = 250;
 	private static final int SWIPE_MIN_DISTANCE = 120;
@@ -40,7 +43,6 @@ public class Today extends Activity implements View.OnTouchListener{
 	private GestureDetector gestureDetetctor;
 	View.OnTouchListener gestureListener;
 	public static BuJoDbHelper dbHelper;
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +58,17 @@ public class Today extends Activity implements View.OnTouchListener{
 			}
 		};
 		dbHelper  = new BuJoDbHelper(getApplicationContext());
-		DisplayBullets();
+		//DisplayBullets();
+		if(findViewById(R.id.fragment_container) != null){
+			if(savedInstanceState != null){
+				return;
+			}
+			BulletFragment firstFragment = new BulletFragment();
+			firstFragment.setArguments(getIntent().getExtras());
+			getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
+		}
 	}
 
-	public void DisplayBullets(){
-		new PopulateJournalEntries().execute(this);
-		}
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -95,117 +101,6 @@ public class Today extends Activity implements View.OnTouchListener{
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
-	public ArrayList<Bullet> GetSorted(ArrayList<Bullet> bullets){
-		Collections.sort(bullets, new Comparator<Bullet>() {
-			@Override
-			public int compare(Bullet bullet1, Bullet bullet2){
-				return (((Long)bullet1.getDate()).compareTo((Long)bullet2.getDate()));
-			}
-		});
-		return bullets;
-	}
-	
-	private class PopulateJournalEntries extends AsyncTask<Context, Void, ArrayList<Bullet>>{
-
-		@Override
-		protected ArrayList<Bullet> doInBackground(Context... contexts) {
-			// TODO Auto-generated method stub
-			BujoDbHandler dbHandler = new BujoDbHandler(contexts[0]);
-			ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-			bullets = dbHandler.getTodayTasks();
-			bullets.addAll(dbHandler.getTodayNotes());
-			bullets.addAll(dbHandler.getTodayEvents());
-			return GetSorted(bullets);
-		}
-		
-		protected void onPostExecute(ArrayList<Bullet> bullets){
-			ListView list = (ListView) findViewById(R.id.listView);
-			ListViewAdapter adapter = new ListViewAdapter(bullets, Today.this);
-			list.setAdapter(adapter);
-		}
-	}
-	
-	public void EditThisTask(View v){
-		TextView textView = (TextView) v.findViewById(R.id.textView);
-		int taskId =  Integer.valueOf(textView.getTag().toString());
-		Task taskObject = dbHelper.getTaskObjectFor(taskId);
-		new TaskEditor().execute(taskObject);
-	}
-
-	public void EditSubTask(View v){
-		TextView textViewSubTask = (TextView) v.findViewById(R.id.textViewForSubTask);
-		int subTaskId =  Integer.valueOf(textViewSubTask.getTag().toString());
-		SubTask subTaskObject = dbHelper.getSubTaskObjectFor(subTaskId);
-		new SubTaskEditor().execute(subTaskObject);
-    }
-	
-	public void EditThisNote(View v){
-		TextView textView = (TextView) v.findViewById(R.id.textView);
-		int noteId =  Integer.valueOf(textView.getTag().toString());
-		Note noteObject = dbHelper.getNoteObjectFor(noteId);
-		new NoteEditor().execute(noteObject);
-	}
-
-	public void EditThisEvent(View v){
-		TextView textView = (TextView) v.findViewById(R.id.textView);
-		int eventId =  Integer.valueOf(textView.getTag().toString());
-		Event eventObject = dbHelper.getEventObjectFor(eventId);
-		new EventEditor().execute(eventObject);
-	}
-	
-	private class TaskEditor extends AsyncTask<Task, Void, Void>{
-		@Override
-		protected Void doInBackground(Task...tasks) {
-			Intent intent = new Intent(Today.this, EditTask.class);
-			intent.putExtra(ApplicationConstants.TASK_OBJECT, tasks[0]);
-	    	startActivity(intent);
-	    	return null;
-		}
-		
-		protected void onPostExecute(){
-		}
-	}
-
-	private class SubTaskEditor extends AsyncTask<SubTask, Void, Void>{
-		@Override
-		protected Void doInBackground(SubTask...tasks) {
-			Intent intent = new Intent(Today.this, EditSubTask.class);
-			intent.putExtra(ApplicationConstants.SUB_TASK_OBJECT, tasks[0]);
-	    	startActivity(intent);
-	    	return null;
-		}
-		
-		protected void onPostExecute(){
-		}
-	}
-
-	private class NoteEditor extends AsyncTask<Note, Void, Void>{
-		@Override
-		protected Void doInBackground(Note...notes) {
-			Intent intent = new Intent(Today.this, EditNote.class);
-			intent.putExtra(ApplicationConstants.NOTE_OBJECT, notes[0]);
-	    	startActivity(intent);
-	    	return null;
-		}
-		
-		protected void onPostExecute(){
-		}
-	}
-
-	private class EventEditor extends AsyncTask<Event, Void, Void>{
-		@Override
-		protected Void doInBackground(Event...events) {
-			Intent intent = new Intent(Today.this, EditEvent.class);
-			intent.putExtra(ApplicationConstants.EVENT_OBJECT, events[0]);
-	    	startActivity(intent);
-	    	return null;
-		}
-		
-		protected void onPostExecute(){
-		}
-	}
-
 	
 	private class TaskCreator extends AsyncTask<Void, Void, Void>{
 		@Override
@@ -245,7 +140,6 @@ public class Today extends Activity implements View.OnTouchListener{
 		}
 		
 	}
-
 	
 	public class MyGestureDetector extends SimpleOnGestureListener{
 
@@ -279,6 +173,13 @@ public class Today extends Activity implements View.OnTouchListener{
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public void onFragmentInteraction(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
 
 

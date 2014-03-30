@@ -26,7 +26,6 @@
 	    android:clickable="true"
 	    android:ellipsize="end"
 	    android:gravity="center_vertical"
-	    android:onClick="EditThisTask"
 	    android:textSize="16sp" />
 
 	</LinearLayout>

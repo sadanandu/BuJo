@@ -28,14 +28,14 @@ public class SearchResultsAdapter extends CursorAdapter{
 		TextView v1 = (TextView)view.findViewById(R.id.textView);
 		v1.setText(c.getString(3));
 		v1.setTag(c.getInt(1));
-		v1.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				((Today) SearchResultsAdapter.this.context).EditThisNote(v);
-			}
-		});
+//		v1.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				((Today) SearchResultsAdapter.this.context).EditThisNote(v);
+//			}
+//		});
 	}
 
 	@Override
