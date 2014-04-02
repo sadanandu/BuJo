@@ -287,6 +287,49 @@ public class BujoDbHandler extends SQLiteOpenHelper{
    	       }
     }
 
+    public ArrayList <Bullet> getNotesWithName(String query){
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	try{
+    		Cursor c = db.rawQuery("select * from notes where note LIKE ?", new String[] {query+"%"});
+    		c.moveToFirst();
+    		ArrayList<Bullet> notes = new ArrayList<Bullet>();
+    		if (c.getCount() > 0){
+    			do{
+    				Note newNote = new Note();
+    				newNote.set_id(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID)));
+    				newNote.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_NOTE)));
+    				newNote.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_NOTEDESCRIPTION)));
+    				newNote.setDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE)));
+    				notes.add(newNote);
+    			}while(c.moveToNext());
+    		}
+    		return notes;
+           }catch (Exception e){
+        	   return null;
+   	       }
+  	}
+
+    public Cursor getEventsWithName(String query){
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	try{
+    		Cursor c = db.rawQuery("select * from events where note LIKE ?", new String[] {query+"%"});
+    		return c;
+           }catch (Exception e){
+        	   return null;
+   	       }
+  	}
+
+    public Cursor getTasksWithName(String query){
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	try{
+    		Cursor c = db.rawQuery("select * from tasks where note LIKE ?", new String[] {query+"%"});
+    		return c;
+           }catch (Exception e){
+        	   return null;
+   	       }
+  	}
+
+    
     public ArrayList <Bullet> getTodayEvents(){
     	SQLiteDatabase db = this.getReadableDatabase();
     	try{

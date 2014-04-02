@@ -23,7 +23,6 @@ public class Event extends Bullet implements Parcelable {
 		this.name = data[1];
 		this.description = data[2];
 		this.date = Long.valueOf(data[3]);
-
 	}
 	
 	@Override
@@ -46,6 +45,5 @@ public class Event extends Bullet implements Parcelable {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
 
 }

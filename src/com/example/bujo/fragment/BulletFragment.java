@@ -91,8 +91,7 @@ public class BulletFragment extends ListFragment {
 			Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.fragment_bullet, container, false);
-
-		DisplayBullets();
+//		DisplayBullets();
 	
 		return view;
 	}
@@ -142,39 +141,39 @@ public class BulletFragment extends ListFragment {
 	}
 
 	
-	
-	public void DisplayBullets(){
-		new PopulateJournalEntries().execute(getActivity());
-		}
-
-
-	private class PopulateJournalEntries extends AsyncTask<Context, Void, ArrayList<Bullet>>{
-
-		@Override
-		protected ArrayList<Bullet> doInBackground(Context... contexts) {
-			// TODO Auto-generated method stub
-			BujoDbHandler dbHandler = new BujoDbHandler(contexts[0]);
-			ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-			bullets = dbHandler.getTodayTasks();
-			bullets.addAll(dbHandler.getTodayNotes());
-			bullets.addAll(dbHandler.getTodayEvents());
-			return GetSorted(bullets);
-		}
-		
-		protected void onPostExecute(ArrayList<Bullet> bullets){
-			setListAdapter(new ListViewAdapter(bullets, getActivity(), BulletFragment.this));
-		}
-	}
-
-	public ArrayList<Bullet> GetSorted(ArrayList<Bullet> bullets){
-		Collections.sort(bullets, new Comparator<Bullet>() {
-			@Override
-			public int compare(Bullet bullet1, Bullet bullet2){
-				return (((Long)bullet1.getDate()).compareTo((Long)bullet2.getDate()));
-			}
-		});
-		return bullets;
-	}
+//	
+//	public void DisplayBullets(){
+//		new PopulateJournalEntries().execute(getActivity());
+//		}
+//
+//
+//	private class PopulateJournalEntries extends AsyncTask<Context, Void, ArrayList<Bullet>>{
+//
+//		@Override
+//		protected ArrayList<Bullet> doInBackground(Context... contexts) {
+//			// TODO Auto-generated method stub
+//			BujoDbHandler dbHandler = new BujoDbHandler(contexts[0]);
+//			ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+//			bullets = dbHandler.getTodayTasks();
+//			bullets.addAll(dbHandler.getTodayNotes());
+//			bullets.addAll(dbHandler.getTodayEvents());
+//			return GetSorted(bullets);
+//		}
+//		
+//		protected void onPostExecute(ArrayList<Bullet> bullets){
+//			setListAdapter(new ListViewAdapter(bullets, getActivity(), BulletFragment.this));
+//		}
+//	}
+//
+//	public ArrayList<Bullet> GetSorted(ArrayList<Bullet> bullets){
+//		Collections.sort(bullets, new Comparator<Bullet>() {
+//			@Override
+//			public int compare(Bullet bullet1, Bullet bullet2){
+//				return (((Long)bullet1.getDate()).compareTo((Long)bullet2.getDate()));
+//			}
+//		});
+//		return bullets;
+//	}
 
 	public void EditThisNote(View v){
 		TextView textView = (TextView) v.findViewById(R.id.textView);

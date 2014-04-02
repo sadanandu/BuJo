@@ -40,14 +40,14 @@ public final class R {
         public static final int tasks=0x7f020009;
     }
     public static final class id {
-        public static final int action_add_event=0x7f0a0025;
-        public static final int action_add_note=0x7f0a0024;
-        public static final int action_add_sub_task=0x7f0a0022;
-        public static final int action_add_task=0x7f0a0023;
-        public static final int action_delete_subtask=0x7f0a0020;
-        public static final int action_delete_task=0x7f0a0021;
-        public static final int action_search=0x7f0a0026;
-        public static final int action_settings=0x7f0a001f;
+        public static final int action_add_event=0x7f0a0023;
+        public static final int action_add_note=0x7f0a0022;
+        public static final int action_add_sub_task=0x7f0a0020;
+        public static final int action_add_task=0x7f0a0021;
+        public static final int action_delete_subtask=0x7f0a001e;
+        public static final int action_delete_task=0x7f0a001f;
+        public static final int action_search=0x7f0a0024;
+        public static final int action_settings=0x7f0a001d;
         public static final int add_event_description=0x7f0a0001;
         public static final int add_event_name=0x7f0a0000;
         public static final int add_note_description=0x7f0a0003;
@@ -60,8 +60,8 @@ public final class R {
         public static final int add_task_description=0x7f0a0009;
         public static final int add_task_name=0x7f0a0008;
         public static final int add_task_timePicker=0x7f0a000b;
-        public static final int checkBox=0x7f0a001d;
-        public static final int checkBoxForSubTask=0x7f0a001a;
+        public static final int checkBox=0x7f0a001b;
+        public static final int checkBoxForSubTask=0x7f0a0018;
         public static final int edit_sub_task_datePicker=0x7f0a000e;
         public static final int edit_sub_task_description=0x7f0a000d;
         public static final int edit_sub_task_name=0x7f0a000c;
@@ -70,15 +70,13 @@ public final class R {
         public static final int edit_task_description=0x7f0a0011;
         public static final int edit_task_name=0x7f0a0010;
         public static final int edit_task_timePicker=0x7f0a0013;
-        public static final int fragment_container=0x7f0a0016;
-        public static final int iconImage=0x7f0a0018;
-        public static final int linearLayoutForNote=0x7f0a0017;
-        public static final int linearLayoutForSubTask=0x7f0a001e;
-        public static final int linearLayoutForTask=0x7f0a001c;
-        public static final int listViewSearchResult=0x7f0a0015;
-        public static final int textView=0x7f0a0019;
-        public static final int textViewForSubTask=0x7f0a001b;
-        public static final int today_list_fragment=0x7f0a0014;
+        public static final int fragment_container=0x7f0a0014;
+        public static final int iconImage=0x7f0a0016;
+        public static final int linearLayoutForNote=0x7f0a0015;
+        public static final int linearLayoutForSubTask=0x7f0a001c;
+        public static final int linearLayoutForTask=0x7f0a001a;
+        public static final int textView=0x7f0a0017;
+        public static final int textViewForSubTask=0x7f0a0019;
     }
     public static final class layout {
         public static final int activity_add_event=0x7f030000;
@@ -89,9 +87,8 @@ public final class R {
         public static final int activity_edit_note=0x7f030005;
         public static final int activity_edit_sub_task=0x7f030006;
         public static final int activity_edit_task=0x7f030007;
-        public static final int activity_main=0x7f030008;
-        public static final int activity_search_results=0x7f030009;
-        public static final int activity_today=0x7f03000a;
+        public static final int activity_search_results=0x7f030008;
+        public static final int activity_today=0x7f030009;
         /** 
     Layout alias to replace the single-pane version of the layout with a
     two-pane version on Large screens.
@@ -114,12 +111,12 @@ public final class R {
     http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
     
          */
-        public static final int fragment_bullet=0x7f030010;
-        public static final int fragment_bullet_list=0x7f03000b;
-        public static final int layout_event=0x7f03000c;
-        public static final int layout_note=0x7f03000d;
-        public static final int layout_sub_task=0x7f03000e;
-        public static final int layout_task=0x7f03000f;
+        public static final int fragment_bullet=0x7f03000f;
+        public static final int fragment_bullet_list=0x7f03000a;
+        public static final int layout_event=0x7f03000b;
+        public static final int layout_note=0x7f03000c;
+        public static final int layout_sub_task=0x7f03000d;
+        public static final int layout_task=0x7f03000e;
     }
     public static final class menu {
         public static final int add_event=0x7f090000;

@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import com.example.bujo.util.BujoDbHandler;
 
 import android.R;
+import static java.lang.System.out;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -33,18 +35,20 @@ public class DataBaseTable {
     private static final String FTS_VIRTUAL_TABLE = "FTS";
     private static final int DATABASE_VERSION = 1;
 
-    private final DatabaseOpenHelper mDatabaseOpenHelper;
+    public final DatabaseOpenHelper mDatabaseOpenHelper;
 
+    private SQLiteDatabase mDb; 
+    private final Context context;
+    
     public DataBaseTable(Context context) {
+    	this.context = context;
         mDatabaseOpenHelper = new DatabaseOpenHelper(context);
-        mDatabaseOpenHelper.getWritableDatabase();
+        mDb =mDatabaseOpenHelper.getWritableDatabase();
     }
 
-    private static class DatabaseOpenHelper extends SQLiteOpenHelper {
+    public static class DatabaseOpenHelper extends SQLiteOpenHelper {
 
         private final Context mHelperContext;
-        private SQLiteDatabase mDatabase;
-
         private static final String FTS_TABLE_CREATE =
                     "CREATE VIRTUAL TABLE " + FTS_VIRTUAL_TABLE +
                     " USING fts3 (_id, " +
@@ -60,9 +64,7 @@ public class DataBaseTable {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            mDatabase = db;
-            mDatabase.execSQL(FTS_TABLE_CREATE);
-            loadBulletEntries();
+        	db.execSQL(FTS_TABLE_CREATE);
         }
 
         @Override
@@ -72,60 +74,68 @@ public class DataBaseTable {
             db.execSQL("DROP TABLE IF EXISTS " + FTS_VIRTUAL_TABLE);
             onCreate(db);
         }
-        
-        private void loadBulletEntries() {
-            new Thread(new Runnable() {
-                public void run() {
-                        loadNotes();
-      
-                }
-            }).start();
-        }
 
-        private void loadNotes(){
-        	BujoDbHandler dbHandler = new BujoDbHandler(mHelperContext);
-        	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-        	bullets = dbHandler.getAllNotes();
-        	int i = 0;
-        	if(bullets != null){
-        	while(i < bullets.size()){
-        		Bullet aBullet = bullets.get(i);
-        		addNote(aBullet.get_id(), aBullet.getClass().getName(), aBullet.getName(), aBullet.getDescription());
-        		i = i +1;
-        	}}
-        }
-
-        public long addNote(int id, String type, String name, String description) {
-        	ContentValues initialValues = new ContentValues();
-        	initialValues.put(COL_ID, id);
-        	initialValues.put(COL_BULLET_TYPE, type);
-        	initialValues.put(COL_NAME, name);
-        	initialValues.put(COL_DESCRIPTION, description);
-
-        	return mDatabase.insert(FTS_VIRTUAL_TABLE, null, initialValues);
-        }
+    
     }
+
+    public void loadBulletEntries() {
+    	new Thread(new Runnable() {
+    		public void run() {
+                loadNotes();
+
+    		}
+    	}).start();
+    }
+
+    private void loadNotes(){
+    	BujoDbHandler dbHandler = new BujoDbHandler(context);
+    	ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+    	bullets = dbHandler.getAllNotes();
+    	int i = 0;
+    	if(bullets != null){
+    		while(i < bullets.size()){
+    			Bullet aBullet = bullets.get(i);
+				addNote(aBullet.get_id(), aBullet.getClass().getName(), aBullet.getName(), aBullet.getDescription());
+				i = i +1;
+    		}}
+    	dbHandler.close();
+    }
+
+    public long addNote(int id, String type, String name, String description) {
+    	ContentValues initialValues = new ContentValues();
+    	initialValues.put(COL_ID, id);
+    	initialValues.put(COL_BULLET_TYPE, type);
+    	initialValues.put(COL_NAME, name);
+    	initialValues.put(COL_DESCRIPTION, description);
+    	return mDb.insert(FTS_VIRTUAL_TABLE, null, initialValues);
+    }
+
     
     public Cursor getBulletMatches(String query, String[] columns) {
-        String selection = COL_NAME + " MATCH ?";
-        String[] selectionArgs = new String[] {query+"*"};
-
-        return query(selection, selectionArgs, columns);
+    	//mDatabaseOpenHelper.loadBulletEntries();
+    	String selection = COL_NAME + " MATCH ?";
+    	String[] selectionArgs = new String[] {query+"*"};
+    	Cursor c = mDb.rawQuery("SELECT * FROM FTS WHERE NAME MATCH ?", selectionArgs);
+    	return c;
     }
 
-    private Cursor query(String selection, String[] selectionArgs, String[] columns) {
-        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-        builder.setTables(FTS_VIRTUAL_TABLE);
-
-        Cursor cursor = builder.query(mDatabaseOpenHelper.getReadableDatabase(),
-                columns, selection, selectionArgs, null, null, null);
-
-        if (cursor == null) {
-            return null;
-        } else if (!cursor.moveToFirst()) {
-            cursor.close();
-            return null;
-        }
-        return cursor;
+    public void DeleteBulletEntries(){
+    	mDb.execSQL("DELETE from FTS");
     }
-}
+//    private Cursor query(String selection, String[] selectionArgs, String[] columns) {
+//    	SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+//    	builder.setTables(FTS_VIRTUAL_TABLE);
+//
+//    	Cursor cursor = builder.query(mDatabaseOpenHelper.getReadableDatabase(),
+//    			columns, null, null, null, null, null);
+//
+//    	if (cursor == null) {
+//    		return null;
+//    	} else if (!cursor.moveToFirst()) {
+//    		cursor.close();
+//    		return null;
+//    	}
+//    	return cursor;
+//    }
+
+}    

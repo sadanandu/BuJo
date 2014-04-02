@@ -1,6 +1,6 @@
 package com.example.bujo.model;
 
-public abstract class Bullet {
+public abstract class Bullet{
     public int _id;
     public String name, description;
     public long date;
