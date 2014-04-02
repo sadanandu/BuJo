@@ -13,7 +13,7 @@ public class Note extends Bullet implements Parcelable{
 		super();
 		this.name = noteName;
 		this.description = noteDescription;		
-		this.date = date;
+		this.createDate = date;
 	}
 	
 	public Note(Parcel in){
@@ -22,13 +22,13 @@ public class Note extends Bullet implements Parcelable{
 		this._id = Integer.valueOf(data[0]);
 		this.name = data[1];
 		this.description = data[2];
-		this.date = Long.valueOf(data[3]);
+		this.createDate = Long.valueOf(data[3]);
 
 	}
 	
 	@Override
 	public void writeToParcel(Parcel dest, int flags){
-		dest.writeStringArray(new String[] {Integer.toString(this._id), this.name, this.description, Long.toString(this.date)});
+		dest.writeStringArray(new String[] {Integer.toString(this._id), this.name, this.description, Long.toString(this.createDate)});
     }
 
 	public static final Parcelable.Creator<Note> CREATOR = new Parcelable.Creator<Note>() {

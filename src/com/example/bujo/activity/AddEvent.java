@@ -1,5 +1,7 @@
 package com.example.bujo.activity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -11,7 +13,9 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
 import com.example.bujo.R;
 import com.example.bujo.model.Event;
@@ -24,6 +28,9 @@ public class AddEvent extends Activity {
 	public Event currentEvent;
 	public EditText eventName;
 	public EditText eventDescription;
+	public DatePicker eventDatePicker;
+	public TimePicker eventTimePicker;
+	public int year, month, day, hour, minute;
 
 	
 	@Override
@@ -34,6 +41,8 @@ public class AddEvent extends Activity {
 		EVENT_CREATED = false;
 		eventName = (EditText) findViewById(R.id.add_event_name);
 		eventDescription = (EditText) findViewById(R.id.add_event_description);
+		eventDatePicker = (DatePicker) findViewById(R.id.add_event_datePicker);
+		eventTimePicker = (TimePicker) findViewById(R.id.add_event_timePicker);
 		eventName.requestFocus();
 		ConfigureTextChangedListener(eventName);
 		setupActionBar();
@@ -43,9 +52,7 @@ public class AddEvent extends Activity {
 	 * Set up the {@link android.app.ActionBar}.
 	 */
 	private void setupActionBar() {
-
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-
 	}
 
 	public void ConfigureTextChangedListener(EditText editText){
@@ -98,12 +105,28 @@ public class AddEvent extends Activity {
 		if (EVENT_CREATED == true){
 			String name = eventName.getText().toString();
 			String desc = eventDescription.getText().toString();
-			long milliseconds = 0;
-			Calendar cal = Calendar.getInstance();
-			Date date = cal.getTime();
-			milliseconds = date.getTime();
+			long millisecondsToReminder = 0;
+			long millisecondsToCreated = 0;
+			year = eventDatePicker.getYear();
+			month = eventDatePicker.getMonth() + 1;
+			day = eventDatePicker.getDayOfMonth();
+			hour = eventTimePicker.getCurrentHour();
+			minute = eventTimePicker.getCurrentMinute();			
+			try {
+				Calendar cal = Calendar.getInstance();
+				Date dateCreated = cal.getTime();
+				millisecondsToCreated = dateCreated.getTime();
+				String dateToParse = day + "-" + month + "-" + year + " " + hour + ":" + minute;
+				SimpleDateFormat dateFormatter = new SimpleDateFormat("d-M-yyyy hh:mm");
+				Date date = dateFormatter.parse(dateToParse);
+				millisecondsToReminder = date.getTime();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} // You will need try/catch around this
+
 			BujoDbHandler dbHandler = new BujoDbHandler(view.getContext());
-			currentEvent = new Event(name, desc, milliseconds);
+			currentEvent = new Event(name, desc, millisecondsToCreated, millisecondsToReminder);
 			dbHandler.addEvent(currentEvent);
 		}
 	}

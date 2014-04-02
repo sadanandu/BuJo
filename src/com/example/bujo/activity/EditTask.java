@@ -49,7 +49,7 @@ public class EditTask extends Activity{
     		taskName.setText(currentTask.getName());
     		taskDescription.setText(currentTask.getDescription());
     		Calendar cal = Calendar.getInstance();
-    		cal.setTimeInMillis(currentTask.getDate());
+    		cal.setTimeInMillis(currentTask.getCreateDate());
     		taskDatePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(cal.DATE));
     		taskTimePicker.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
     		taskTimePicker.setCurrentMinute(cal.get(Calendar.MINUTE));
@@ -130,7 +130,7 @@ public class EditTask extends Activity{
 		BujoDbHandler taskHandler = new BujoDbHandler(view.getContext());
 		currentTask.setName(name);
 		currentTask.setDescription(desc);
-		currentTask.setDate(milliseconds);
+		currentTask.setCreateDate(milliseconds);
 		taskHandler.saveTask(currentTask);
 	}
 }

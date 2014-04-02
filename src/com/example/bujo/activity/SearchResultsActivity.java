@@ -23,7 +23,6 @@ import com.example.bujo.util.ListViewAdapter;
 
 public class SearchResultsActivity extends FragmentActivity implements View.OnTouchListener, OnFragmentInteractionListener {
 
-	public DataBaseTable virtualDb;
 	public BulletFragment firstFragment;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

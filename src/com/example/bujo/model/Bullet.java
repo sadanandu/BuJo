@@ -3,7 +3,7 @@ package com.example.bujo.model;
 public abstract class Bullet{
     public int _id;
     public String name, description;
-    public long date;
+    public long createDate;
     
 	public String getName() {
 		return name;
@@ -13,12 +13,12 @@ public abstract class Bullet{
 		this.name = name;
 	}
 
-	public long getDate() {
-		return date;
+	public long getCreateDate() {
+		return createDate;
 	}
 
-	public void setDate(long date) {
-		this.date = date;
+	public void setCreateDate(long date) {
+		this.createDate = date;
 	}
 
 	public int get_id() {

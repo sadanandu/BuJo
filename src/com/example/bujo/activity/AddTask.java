@@ -5,6 +5,7 @@ import static java.lang.System.out;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import android.app.Activity;
@@ -130,24 +131,28 @@ public class AddTask extends Activity {
 		if (TASK_CREATED == true){
 			String name = taskName.getText().toString();
 			String desc = taskDescription.getText().toString();
-			long milliseconds = 0;
+			long millisecondsToReminder = 0;
+			long millisecondsToCreated = 0;
 			year = taskDatePicker.getYear();
 			month = taskDatePicker.getMonth() + 1;
 			day = taskDatePicker.getDayOfMonth();
 			hour = taskTimePicker.getCurrentHour();
 			minute = taskTimePicker.getCurrentMinute();
 			try {
+				Calendar cal = Calendar.getInstance();
+				Date dateCreated = cal.getTime();
+				millisecondsToCreated = dateCreated.getTime();
 				String dateToParse = day + "-" + month + "-" + year + " " + hour + ":" + minute;
 				SimpleDateFormat dateFormatter = new SimpleDateFormat("d-M-yyyy hh:mm");
 				Date date = dateFormatter.parse(dateToParse);
-				milliseconds = date.getTime();
+				millisecondsToReminder = date.getTime();
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} // You will need try/catch around this
 
 			BujoDbHandler taskHandler = new BujoDbHandler(view.getContext());
-			currentTask = new Task(name, desc, milliseconds);
+			currentTask = new Task(name, desc, millisecondsToCreated , millisecondsToReminder);
 			taskHandler.addTask(currentTask);
 		}
 	}

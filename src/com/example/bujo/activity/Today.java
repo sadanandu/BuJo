@@ -76,7 +76,7 @@ public class Today extends FragmentActivity  implements View.OnTouchListener, On
 		Collections.sort(bullets, new Comparator<Bullet>() {
 			@Override
 			public int compare(Bullet bullet1, Bullet bullet2){
-				return (((Long)bullet1.getDate()).compareTo((Long)bullet2.getDate()));
+				return (((Long)bullet1.getCreateDate()).compareTo((Long)bullet2.getCreateDate()));
 			}
 		});
 		return bullets;
