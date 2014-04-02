@@ -218,8 +218,6 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     public ArrayList <Bullet> getTodayTasks(){
     	SQLiteDatabase db = this.getReadableDatabase();
     	try{
-    		Cursor c1 = db.rawQuery("select date('now')", new String[0]);
-    		c1.moveToFirst();
     		Cursor c = db.rawQuery("select * from tasks where date(datetime(date/1000, 'unixepoch')) = date('now')", new String[0]);
     		c.moveToFirst();
     		ArrayList<Bullet> tasks = new ArrayList<Bullet>();
@@ -309,21 +307,46 @@ public class BujoDbHandler extends SQLiteOpenHelper{
    	       }
   	}
 
-    public Cursor getEventsWithName(String query){
+    public ArrayList <Bullet> getTasksWithName(String query){
     	SQLiteDatabase db = this.getReadableDatabase();
     	try{
-    		Cursor c = db.rawQuery("select * from events where note LIKE ?", new String[] {query+"%"});
-    		return c;
+    		Cursor c = db.rawQuery("select * from tasks where task LIKE ?", new String[] {query+"%"});
+    		c.moveToFirst();
+    		ArrayList<Bullet> tasks = new ArrayList<Bullet>();
+    		if (c.getCount() > 0){
+    			do{
+    				Task newTask = new Task();
+    				newTask.set_id(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID)));
+    				newTask.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)));
+    				newTask.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
+    				newTask.setDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE)));
+    				newTask.setIsDone(c.getString(c.getColumnIndex(BujoDbHandler.KEY_ISDONE)));
+    				tasks.add(newTask);
+    			}while(c.moveToNext());
+    		}
+    		return tasks;
            }catch (Exception e){
         	   return null;
    	       }
   	}
 
-    public Cursor getTasksWithName(String query){
-    	SQLiteDatabase db = this.getReadableDatabase();
-    	try{
-    		Cursor c = db.rawQuery("select * from tasks where note LIKE ?", new String[] {query+"%"});
-    		return c;
+    public ArrayList <Bullet> getEventsWithName(String query){
+     	SQLiteDatabase db = this.getReadableDatabase();
+     	try{
+     		Cursor c = db.rawQuery("select * from events where event LIKE ?", new String[] {query+"%"});
+     		c.moveToFirst();
+    		ArrayList<Bullet> events = new ArrayList<Bullet>();
+    		if (c.getCount() > 0){
+    			do{
+    				Event newEvent = new Event();
+    				newEvent.set_id(c.getInt(c.getColumnIndex(BujoDbHandler.KEY_ID)));
+    				newEvent.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_EVENT)));
+    				newEvent.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_EVENTDESCRIPTION)));
+    				newEvent.setDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE)));
+    				events.add(newEvent);
+    			}while(c.moveToNext());
+    		}
+    		return events;
            }catch (Exception e){
         	   return null;
    	       }
