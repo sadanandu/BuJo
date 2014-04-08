@@ -6,9 +6,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -18,10 +23,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bujo.R;
 import com.example.bujo.activity.AddSubTask;
-import com.example.bujo.activity.Today;
+import com.example.bujo.activity.SearchResultsActivity;
 import com.example.bujo.fragment.BulletFragment;
 import com.example.bujo.model.Bullet;
 import com.example.bujo.model.Event;
@@ -37,7 +43,10 @@ public class ListViewAdapter extends BaseAdapter{
 	private static final int TASKROW = 0;
 	private static final int NOTEROW = 1;
 	private static final int EVENTROW = 2;
+	public ArrayList<Integer> selectedItems;
 	public BuJoDbHelper dbHelper;
+//	private ActionMode.Callback mActionModeCallback;
+//	private ActionMode mActionMode;
 	
 	static class ViewHolder{
 		View rowView, subLine;
@@ -54,6 +63,48 @@ public class ListViewAdapter extends BaseAdapter{
 		this.inflater = inflater;
 		this.fragment = fragment;
 		dbHelper = new BuJoDbHelper(context);
+//		selectedItems = new ArrayList<Integer>();
+//		mActionModeCallback = new ActionMode.Callback() {
+//
+//		    // Called when the action mode is created; startActionMode() was called
+//		    @Override
+//		    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//		        // Inflate a menu resource providing context menu items
+//		        MenuInflater inflater = mode.getMenuInflater();
+//		        inflater.inflate(R.menu.task_long_click_menu, menu);
+//		        return true;
+//		    }
+//
+//		    // Called each time the action mode is shown. Always called after onCreateActionMode, but
+//		    // may be called multiple times if the mode is invalidated.
+//		    @Override
+//		    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//		        return false; // Return false if nothing is done
+//		    }
+//
+//		    // Called when the user selects a contextual menu item
+//		    @Override
+//		    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//		        switch (item.getItemId()) {
+//		            case R.id.action_add_sub_task:
+//		            	
+//		            	mode.finish(); // Action picked, so close the CAB
+//		                return true;
+//		            case R.id.action_delete_task:
+//		            	
+//		            	mode.finish();
+//		            	return true;
+//		            default:
+//		                return false;
+//		        }
+//		    }
+//
+//		    // Called when the user exits the action mode
+//		    @Override
+//		    public void onDestroyActionMode(ActionMode mode) {
+//		        mActionMode = null;
+//		    }
+//		};
 	}
 	
 	@Override
@@ -139,6 +190,15 @@ public class ListViewAdapter extends BaseAdapter{
 					holder.checkBoxForTask.setChecked(true);
 				}
 
+//				holder.textForTask.setOnLongClickListener(new View.OnLongClickListener() {
+//				    // Called when the user long-clicks on someView
+//				    public boolean onLongClick(View view) {
+//				    	selectedItems.add(Integer.valueOf(positionOfRow));
+//				    	view.setBackgroundColor(Color.YELLOW);
+//				    	return TaskLongClick(view);
+//				    }
+//				});
+				
 				holder.textForTask.setOnClickListener(new OnClickListener() {
 					
 					@Override
@@ -331,8 +391,6 @@ public class ListViewAdapter extends BaseAdapter{
 		alert.show();
 	}
 	
-	
-	
 	@SuppressWarnings("deprecation")
 	public void showOptionsMenuForSubTask(final TextView v){
 		AlertDialog alert = new AlertDialog.Builder(this.context).create();
@@ -382,7 +440,6 @@ public class ListViewAdapter extends BaseAdapter{
 		alert.show();
 	}
 
-	
 	public class TaskDeleter extends AsyncTask<Integer, Void, Void>{
 		@Override
 		protected Void doInBackground(Integer...taskIds) {
@@ -444,6 +501,5 @@ public class ListViewAdapter extends BaseAdapter{
 		protected void onPostExecute(){
 		}
 	}
-
 	
 }

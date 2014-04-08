@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -90,6 +91,13 @@ public class SearchResultsActivity extends FragmentActivity implements View.OnTo
 		}
 	}
 
+//	@Override
+//	public void onConfigurationChanged(Configuration newConfig) {
+//		super.onConfigurationChanged(newConfig);
+//		setContentView(R.layout.activity_search_results);
+//	}
+
+	
 	@Override
 	public void onFragmentInteraction(String id) {
 		// TODO Auto-generated method stub
@@ -102,5 +110,4 @@ public class SearchResultsActivity extends FragmentActivity implements View.OnTo
 		return false;
 	}
 
-	
 }

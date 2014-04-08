@@ -16,11 +16,16 @@
     <style name="AppTheme" parent="AppBaseTheme">
         
         <item name="android:actionBarStyle">@style/MyActionBar</item>
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:actionModeBackground">@drawable/cab_background</item>
+<!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
 		<item name="android:background">#fdc938</item>	        
     </style>
 
+    <style name="MyActionMode">
+    	<item name="android:background">#fdc938</item>
+    </style>
+    
 </resources>

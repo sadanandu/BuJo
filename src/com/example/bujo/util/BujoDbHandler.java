@@ -42,7 +42,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     public static final String KEY_EVENTDESCRIPTION = "description";
 
     private static final String SQL_CREATE_TASK_ENTRIES =
-            "CREATE TABLE " + TABLE_TASK + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, task TEXT, description TEXT, date LONG, reminderDate LONG, isDone TEXT)";
+            "CREATE TABLE " + TABLE_TASK + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, task TEXT, description TEXT, date LONG, isDone TEXT)";
 
     private static final String SQL_CREATE_SUBTASK_ENTRIES =
             "CREATE TABLE " + TABLE_SUBTASK + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, subtask TEXT, subtaskdescription TEXT, parenttask INTEGER, date LONG, isDone TEXT)";
@@ -51,7 +51,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
             "CREATE TABLE " + TABLE_NOTE + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT, description TEXT, date LONG)";
 
     private static final String SQL_CREATE_EVENT_ENTRIES =
-            "CREATE TABLE " + TABLE_EVENT + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, event TEXT, description TEXT, date LONG, reminderDate LONG)";
+            "CREATE TABLE " + TABLE_EVENT + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, event TEXT, description TEXT, date LONG)";
 
     
     private static final String SQL_DELETE_TASKENTRIES =
@@ -100,7 +100,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	values.put(KEY_TASK, task.getName());
     	values.put(KEY_DESCRIPTION, task.getDescription());
     	values.put(KEY_DATE_CREATED, task.getCreateDate());
-    	values.put(KEY_REMINDER_DATE, task.getReminderDate());
+//    	values.put(KEY_REMINDER_DATE, task.getReminderDate());
     	values.put(KEY_ISDONE, task.getIsDone());
     	db.insert(TABLE_TASK, null, values);
     	db.close();
@@ -135,7 +135,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	values.put(KEY_EVENT, event.getName());
     	values.put(KEY_EVENTDESCRIPTION, event.getDescription());
     	values.put(KEY_DATE_CREATED, event.getCreateDate());
-    	values.put(KEY_REMINDER_DATE, event.getReminderDate());
+//    	values.put(KEY_REMINDER_DATE, event.getReminderDate());
     	db.insert(TABLE_EVENT, null, values);
     	db.close();
     }
@@ -144,19 +144,19 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery("select * from tasks where _id = ?", new String[] {Integer.toString(id)});
 		String taskDescription, taskName, isDone;
-		long taskDate, taskReminder;		
+		long taskDate;		
 		c.moveToFirst();
 		taskName = c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK));
 		taskDescription = c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION));
 		taskDate = c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE_CREATED));
-		taskReminder = c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE));
+//		taskReminder = c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE));
 		isDone = c.getString(c.getColumnIndex(BujoDbHandler.KEY_ISDONE));
 		Task task = new Task();
 		task.set_id(id);
 		task.setName(taskName);
 		task.setDescription(taskDescription);
 		task.setCreateDate(taskDate);
-		task.setReminderDate(taskReminder);
+//		task.setReminderDate(taskReminder);
 		task.setIsDone(isDone);
 		db.close();
 		return task;
@@ -207,18 +207,18 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery("select * from events where _id = ?", new String[] {Integer.toString(id)});
 		String eventDescription, eventName;
-		long eventDate, reminderDate;		
+		long eventDate;		
 		c.moveToFirst();
 		eventName = c.getString(c.getColumnIndex(BujoDbHandler.KEY_EVENT));
 		eventDescription = c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION));
 		eventDate = c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE_CREATED));
-		reminderDate = c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE));
+//		reminderDate = c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE));
 		Event event = new Event();
 		event.set_id(id);
 		event.setName(eventName);
 		event.setDescription(eventDescription);
 		event.setCreateDate(eventDate);
-		event.setReminderDate(reminderDate);
+//		event.setReminderDate(reminderDate);
 		db.close();
 		return event;
     }
@@ -237,7 +237,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     				newTask.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)));
     				newTask.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
     				newTask.setCreateDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE_CREATED)));
-    				newTask.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
+//    				newTask.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
     				newTask.setIsDone(c.getString(c.getColumnIndex(BujoDbHandler.KEY_ISDONE)));
     				tasks.add(newTask);
     			}while(c.moveToNext());
@@ -329,7 +329,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     				newTask.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)));
     				newTask.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
     				newTask.setCreateDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE_CREATED)));
-    				newTask.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
+//    				newTask.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
     				newTask.setIsDone(c.getString(c.getColumnIndex(BujoDbHandler.KEY_ISDONE)));
     				tasks.add(newTask);
     			}while(c.moveToNext());
@@ -353,7 +353,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     				newEvent.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_EVENT)));
     				newEvent.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_EVENTDESCRIPTION)));
     				newEvent.setCreateDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE_CREATED)));
-    				newEvent.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
+//    				newEvent.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
     				events.add(newEvent);
     			}while(c.moveToNext());
     		}
@@ -377,7 +377,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     				newEvent.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_EVENT)));
     				newEvent.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_EVENTDESCRIPTION)));
     				newEvent.setCreateDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE_CREATED)));
-    				newEvent.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
+//    				newEvent.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
     				events.add(newEvent);
     			}while(c.moveToNext());
     		}
@@ -399,7 +399,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     			newTask.setName(c.getString(c.getColumnIndex(BujoDbHandler.KEY_TASK)));
     			newTask.setDescription(c.getString(c.getColumnIndex(BujoDbHandler.KEY_DESCRIPTION)));
     			newTask.setCreateDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_DATE_CREATED)));
-    			newTask.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
+//    			newTask.setReminderDate(c.getLong(c.getColumnIndex(BujoDbHandler.KEY_REMINDER_DATE)));
     			tasks.add(newTask);
     		}while(c.moveToNext());
     		return tasks;
@@ -461,7 +461,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	values.put(KEY_TASK, task.getName());
     	values.put(KEY_DESCRIPTION, task.getDescription());
     	values.put(KEY_DATE_CREATED, task.getCreateDate());
-    	values.put(KEY_REMINDER_DATE, task.getReminderDate());
+//    	values.put(KEY_REMINDER_DATE, task.getReminderDate());
     	values.put(KEY_ISDONE, task.getIsDone());
     	db.update(TABLE_TASK, values, KEY_ID+" = ?", new String[] { String.valueOf(task.get_id())});
     	db.close();
@@ -495,7 +495,7 @@ public class BujoDbHandler extends SQLiteOpenHelper{
    	values.put(KEY_EVENT, event.getName());
    	values.put(KEY_EVENTDESCRIPTION, event.getDescription());
    	values.put(KEY_DATE_CREATED, event.getCreateDate());
-   	values.put(KEY_REMINDER_DATE, event.getReminderDate());
+//   	values.put(KEY_REMINDER_DATE, event.getReminderDate());
    	db.update(TABLE_EVENT, values, KEY_ID+" = ?", new String[] { String.valueOf(event.get_id())});
    	db.close();
   }

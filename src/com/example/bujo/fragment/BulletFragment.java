@@ -47,6 +47,17 @@ import com.example.bujo.util.ListViewAdapter;
 //public class BulletFragment extends Fragment implements AbsListView.OnItemClickListener {
 public class BulletFragment extends ListFragment {
 
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onSaveInstanceState(android.os.Bundle)
+	 */
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		
+	}
+
+
 	// TODO: Rename parameter arguments, choose names that match
 	// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 	private static final String ARG_PARAM1 = "param1";
@@ -83,6 +94,7 @@ public class BulletFragment extends ListFragment {
 			mParam1 = getArguments().getString(ARG_PARAM1);
 			mParam2 = getArguments().getString(ARG_PARAM2);
 		}
+		setRetainInstance(true);
 		dbHelper  = new BuJoDbHelper(getActivity());
 	}
 

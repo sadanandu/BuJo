@@ -17,7 +17,7 @@
        
         <activity
             android:name="com.example.bujo.activity.Today"
-            android:label="@string/Today" >
+            android:label="@string/Today">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -96,7 +96,7 @@
             android:name="com.example.bujo.activity.SearchResultsActivity"
             android:label="@string/title_activity_search_results"
             android:parentActivityName="com.example.bujo.activity.Today"
-            android:launchMode="singleTop">            >
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

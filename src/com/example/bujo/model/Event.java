@@ -4,33 +4,33 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Event extends Bullet implements Parcelable {
-	private long reminderDate;
+	//private long reminderDate;
 	
 	public Event() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Event(String eventName, String eventDescription, long date, long reminderDate){
+	public Event(String eventName, String eventDescription, long date){
 		super();
 		this.name = eventName;
 		this.description = eventDescription;		
 		this.createDate = date;
-		this.setReminderDate(reminderDate);
+//		this.setReminderDate(reminderDate);
 	}
 	
 	public Event(Parcel in){
-		String[] data = new String[5];
+		String[] data = new String[4];
 		in.readStringArray(data);
 		this._id = Integer.valueOf(data[0]);
 		this.name = data[1];
 		this.description = data[2];
 		this.createDate = Long.valueOf(data[3]);
-		this.reminderDate = Long.valueOf(data[4]);
+//		this.reminderDate = Long.valueOf(data[4]);
 	}
 	
 	@Override
 	public void writeToParcel(Parcel dest, int flags){
-		dest.writeStringArray(new String[] {Integer.toString(this._id), this.name, this.description, Long.toString(this.createDate), Long.toString(this.reminderDate)});
+		dest.writeStringArray(new String[] {Integer.toString(this._id), this.name, this.description, Long.toString(this.createDate)});
     }
 
 	public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
@@ -49,12 +49,12 @@ public class Event extends Bullet implements Parcelable {
 		return 0;
 	}
 
-	public long getReminderDate() {
-		return reminderDate;
-	}
-
-	public void setReminderDate(long reminderDate) {
-		this.reminderDate = reminderDate;
-	}
+//	public long getReminderDate() {
+//		return reminderDate;
+//	}
+//
+//	public void setReminderDate(long reminderDate) {
+//		this.reminderDate = reminderDate;
+//	}
 
 }

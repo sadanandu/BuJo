@@ -27,9 +27,9 @@ public class EditTask extends Activity{
 	public Task currentTask;
 	public EditText taskName;
 	public EditText taskDescription;
-	public DatePicker taskDatePicker;
-	public TimePicker taskTimePicker;
-	public int year, month, day, hour, minute;
+//	public DatePicker taskDatePicker;
+//	public TimePicker taskTimePicker;
+//	public int year, month, day, hour, minute;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +38,8 @@ public class EditTask extends Activity{
 		// Show the Up button in the action bar.
 		taskName = (EditText) findViewById(R.id.edit_task_name);
     	taskDescription = (EditText) findViewById(R.id.edit_task_description);
-    	taskDatePicker = (DatePicker) findViewById(R.id.edit_task_datePicker);
-    	taskTimePicker = (TimePicker) findViewById(R.id.edit_task_timePicker);
+//    	taskDatePicker = (DatePicker) findViewById(R.id.edit_task_datePicker);
+//    	taskTimePicker = (TimePicker) findViewById(R.id.edit_task_timePicker);
     	
     	ConfigureTextChangedListener(taskName);
     	ConfigureTextChangedListener(taskDescription);
@@ -50,9 +50,9 @@ public class EditTask extends Activity{
     		taskDescription.setText(currentTask.getDescription());
     		Calendar cal = Calendar.getInstance();
     		cal.setTimeInMillis(currentTask.getCreateDate());
-    		taskDatePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(cal.DATE));
-    		taskTimePicker.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
-    		taskTimePicker.setCurrentMinute(cal.get(Calendar.MINUTE));
+//    		taskDatePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(cal.DATE));
+//    		taskTimePicker.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
+//    		taskTimePicker.setCurrentMinute(cal.get(Calendar.MINUTE));
     	}
     	setupActionBar();
 	}
@@ -111,26 +111,25 @@ public class EditTask extends Activity{
 		//Intent intent = new Intent(this, Today.class);
 		String name = taskName.getText().toString();
 		String desc = taskDescription.getText().toString();
-		long milliseconds = 0;
-		year = taskDatePicker.getYear();
-		month = taskDatePicker.getMonth() + 1;
-		day = taskDatePicker.getDayOfMonth();
-		hour = taskTimePicker.getCurrentHour();
-		minute = taskTimePicker.getCurrentMinute();
-		try {
-			String toParse = day + "-" + month + "-" + year + " " + hour + ":" + minute; // Results in "2-5-2012 20:43"
-			SimpleDateFormat formatter = new SimpleDateFormat("d-M-yyyy hh:mm"); // I assume d-M, you may refer to M-d for month-day instead.
-			Date date = formatter.parse(toParse);
-			milliseconds = date.getTime();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // You will need try/catch around this
+//		long milliseconds = 0;
+//		year = taskDatePicker.getYear();
+//		month = taskDatePicker.getMonth() + 1;
+//		day = taskDatePicker.getDayOfMonth();
+//		hour = taskTimePicker.getCurrentHour();
+//		minute = taskTimePicker.getCurrentMinute();
+//		try {
+//			String toParse = day + "-" + month + "-" + year + " " + hour + ":" + minute; // Results in "2-5-2012 20:43"
+//			SimpleDateFormat formatter = new SimpleDateFormat("d-M-yyyy hh:mm"); // I assume d-M, you may refer to M-d for month-day instead.
+//			Date date = formatter.parse(toParse);
+//			milliseconds = date.getTime();
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} // You will need try/catch around this
 
 		BujoDbHandler taskHandler = new BujoDbHandler(view.getContext());
 		currentTask.setName(name);
 		currentTask.setDescription(desc);
-		currentTask.setCreateDate(milliseconds);
 		taskHandler.saveTask(currentTask);
 	}
 }

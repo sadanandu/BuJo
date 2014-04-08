@@ -32,9 +32,9 @@ public class AddTask extends Activity {
 	public Task currentTask;
 	public EditText taskName;
 	public EditText taskDescription;
-	public DatePicker taskDatePicker;
-	public TimePicker taskTimePicker;
-	public int year, month, day, hour, minute;
+//	public DatePicker taskDatePicker;
+//	public TimePicker taskTimePicker;
+//	public int year, month, day, hour, minute;
 	
 
 	@Override
@@ -45,8 +45,8 @@ public class AddTask extends Activity {
 		// Show the Up button in the action bar.
 		taskName = (EditText) findViewById(R.id.add_task_name);
     	taskDescription = (EditText) findViewById(R.id.add_task_description);
-    	taskDatePicker = (DatePicker) findViewById(R.id.add_task_datePicker);
-    	taskTimePicker = (TimePicker) findViewById(R.id.add_task_timePicker);
+//    	taskDatePicker = (DatePicker) findViewById(R.id.add_task_datePicker);
+//    	taskTimePicker = (TimePicker) findViewById(R.id.add_task_timePicker);
     	taskName.requestFocus();
     	ConfigureTextChangedListener(taskName);
     	setupActionBar();
@@ -131,28 +131,28 @@ public class AddTask extends Activity {
 		if (TASK_CREATED == true){
 			String name = taskName.getText().toString();
 			String desc = taskDescription.getText().toString();
-			long millisecondsToReminder = 0;
+//			long millisecondsToReminder = 0;
 			long millisecondsToCreated = 0;
-			year = taskDatePicker.getYear();
-			month = taskDatePicker.getMonth() + 1;
-			day = taskDatePicker.getDayOfMonth();
-			hour = taskTimePicker.getCurrentHour();
-			minute = taskTimePicker.getCurrentMinute();
+//			year = taskDatePicker.getYear();
+//			month = taskDatePicker.getMonth() + 1;
+//			day = taskDatePicker.getDayOfMonth();
+//			hour = taskTimePicker.getCurrentHour();
+//			minute = taskTimePicker.getCurrentMinute();
 			try {
 				Calendar cal = Calendar.getInstance();
 				Date dateCreated = cal.getTime();
 				millisecondsToCreated = dateCreated.getTime();
-				String dateToParse = day + "-" + month + "-" + year + " " + hour + ":" + minute;
-				SimpleDateFormat dateFormatter = new SimpleDateFormat("d-M-yyyy hh:mm");
-				Date date = dateFormatter.parse(dateToParse);
-				millisecondsToReminder = date.getTime();
-			} catch (ParseException e) {
+//				String dateToParse = day + "-" + month + "-" + year + " " + hour + ":" + minute;
+//				SimpleDateFormat dateFormatter = new SimpleDateFormat("d-M-yyyy hh:mm");
+//				Date date = dateFormatter.parse(dateToParse);
+//				millisecondsToReminder = date.getTime();
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} // You will need try/catch around this
 
 			BujoDbHandler taskHandler = new BujoDbHandler(view.getContext());
-			currentTask = new Task(name, desc, millisecondsToCreated , millisecondsToReminder);
+			currentTask = new Task(name, desc, millisecondsToCreated);
 			taskHandler.addTask(currentTask);
 		}
 	}

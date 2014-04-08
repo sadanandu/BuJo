@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.ArrayAdapter;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bujo.R;
@@ -27,25 +27,37 @@ import com.example.bujo.util.BuJoDbHelper;
 import com.example.bujo.util.BujoDbHandler;
 import com.example.bujo.util.ListViewAdapter;
 
-public class Today extends FragmentActivity  implements View.OnTouchListener, OnFragmentInteractionListener{
+public class Today extends FragmentActivity  implements View.OnTouchListener, OnFragmentInteractionListener, ActionBar.OnNavigationListener {
 
 	public static BuJoDbHelper dbHelper;
 	public BulletFragment firstFragment;
+	public Bundle InstanceState;
+	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_today);
-		dbHelper  = new BuJoDbHelper(getApplicationContext());
-		//DisplayBullets();
-		if(findViewById(R.id.fragment_container) != null){
-			if(savedInstanceState != null){
-				return;
-			}
-			firstFragment = new BulletFragment();
-			firstFragment.setArguments(getIntent().getExtras());
-			getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
-		}
-		GetTodaysBullets();
+		InstanceState = savedInstanceState;
+		final ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		// Specify a SpinnerAdapter to populate the dropdown list.
+		String[] navigationOptions = new String[] {"Today", "Yesterday", "Tomorrow", "Custom Date"};
+		ArrayAdapter <String> spinnerAdapter = new ArrayAdapter<String>(this, R.layout.layout_spinner, navigationOptions);
+		actionBar.setListNavigationCallbacks(spinnerAdapter, this);
+
+//		dbHelper  = new BuJoDbHelper(getApplicationContext());
+//		if(findViewById(R.id.fragment_container) != null){
+//			if(savedInstanceState != null){
+//				return;
+//			}
+//			firstFragment = new BulletFragment();
+//			firstFragment.setArguments(getIntent().getExtras());
+//			getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
+//		}
+//		
+//		GetTodaysBullets();
 	}
 
 	public void GetTodaysBullets(){
@@ -93,6 +105,12 @@ public class Today extends FragmentActivity  implements View.OnTouchListener, On
 		return super.onCreateOptionsMenu(menu);
 	}
 
+//	  @Override
+//	    public void onConfigurationChanged(Configuration newConfig) {
+//	      super.onConfigurationChanged(newConfig);
+//	      setContentView(R.layout.activity_today);
+//	    }
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
@@ -114,6 +132,23 @@ public class Today extends FragmentActivity  implements View.OnTouchListener, On
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		// Restore the previously serialized current dropdown position.
+		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
+			getActionBar().setSelectedNavigationItem(
+					savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// Serialize the current dropdown position.
+		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar()
+				.getSelectedNavigationIndex());
+	}
+
 	
 	private class TaskCreator extends AsyncTask<Void, Void, Void>{
 		@Override
@@ -164,6 +199,24 @@ public class Today extends FragmentActivity  implements View.OnTouchListener, On
 	public void onFragmentInteraction(String id) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean onNavigationItemSelected(int arg0, long arg1) {
+		// TODO Auto-generated method stub
+		dbHelper  = new BuJoDbHelper(getApplicationContext());
+		if(findViewById(R.id.fragment_container) != null){
+			if(InstanceState != null){
+				return false;
+			}
+			firstFragment = new BulletFragment();
+			firstFragment.setArguments(getIntent().getExtras());
+			getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
+		}
+		
+		GetTodaysBullets();
+		Toast.makeText(getApplicationContext(), "Showing today", Toast.LENGTH_SHORT).show();
+		return false;
 	}
 
 }
