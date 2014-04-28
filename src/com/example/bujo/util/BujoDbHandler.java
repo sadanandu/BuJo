@@ -223,10 +223,12 @@ public class BujoDbHandler extends SQLiteOpenHelper{
 		return event;
     }
 
-    public ArrayList <Bullet> getTodayTasks(){
+    public ArrayList <Bullet> getTasksForDate(long askeddate){
     	SQLiteDatabase db = this.getReadableDatabase();
     	try{
-    		Cursor c = db.rawQuery("select * from tasks where date(datetime(date/1000, 'unixepoch')) = date('now')", new String[0]);
+    		String query = "select * from tasks where date(datetime(date/1000, 'unixepoch')) = date(datetime(" + Long.toString(askeddate) + "/1000, 'unixepoch'))";
+    		Cursor c = db.rawQuery(query, new String[0]);
+    		//Cursor c = db.rawQuery("select * from tasks where date(datetime(date/1000, 'unixepoch')) = date('now')", new String[0]);
     		c.moveToFirst();
     		ArrayList<Bullet> tasks = new ArrayList<Bullet>();
     		if (c.getCount() > 0){
@@ -272,10 +274,12 @@ public class BujoDbHandler extends SQLiteOpenHelper{
     	 }
     }
 
-    public ArrayList <Bullet> getTodayNotes(){
+    public ArrayList <Bullet> getNotesForDate(long askeddate){
     	SQLiteDatabase db = this.getReadableDatabase();
     	try{
-    		Cursor c = db.rawQuery("select * from notes where date(datetime(date/1000, 'unixepoch')) = date('now')", new String[0]);
+    		String query = "select * from notes where date(datetime(date/1000, 'unixepoch')) = date(datetime(" + Long.toString(askeddate) + "/1000, 'unixepoch'))";
+    		Cursor c = db.rawQuery(query, new String[0]);
+    		//Cursor c = db.rawQuery("select * from notes where date(datetime(date/1000, 'unixepoch')) = date('now')", new String[0]);
     		c.moveToFirst();
     		ArrayList<Bullet> notes = new ArrayList<Bullet>();
     		if (c.getCount() > 0){
@@ -364,10 +368,12 @@ public class BujoDbHandler extends SQLiteOpenHelper{
   	}
 
     
-    public ArrayList <Bullet> getTodayEvents(){
+    public ArrayList <Bullet> getEventsForDate(long askeddate){
     	SQLiteDatabase db = this.getReadableDatabase();
     	try{
-    		Cursor c = db.rawQuery("select * from events where date(datetime(date/1000, 'unixepoch')) = date('now')", new String[0]);
+    		String query = "select * from events where date(datetime(date/1000, 'unixepoch')) = date(datetime(" + Long.toString(askeddate) + "/1000, 'unixepoch'))";
+    		Cursor c = db.rawQuery(query, new String[0]);
+    		//Cursor c = db.rawQuery("select * from events where date(datetime(date/1000, 'unixepoch')) = date('now')", new String[0]);
     		c.moveToFirst();
     		ArrayList<Bullet> events = new ArrayList<Bullet>();
     		if (c.getCount() > 0){
